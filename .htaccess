@@ -1,0 +1,38 @@
+# =============================================================================
+# Glossary Skin — Weight Management Landing Page
+# Performance config for Apache (Hostinger and most shared hosting).
+# Safe to delete if your host already handles compression/caching at the
+# server level — this just makes sure it happens if it doesn't.
+# =============================================================================
+
+# ---- Compression -------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ---- Browser caching -----------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css                "access plus 1 year"
+  ExpiresByType application/javascript  "access plus 1 year"
+  ExpiresByType image/jpeg              "access plus 1 year"
+  ExpiresByType image/png               "access plus 1 year"
+  ExpiresByType image/webp              "access plus 1 year"
+  ExpiresByType image/svg+xml           "access plus 1 year"
+  ExpiresByType video/mp4               "access plus 1 year"
+  ExpiresByType text/html               "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|jpg|jpeg|png|webp|svg|mp4|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# ---- Security / hygiene --------------------------------------------------
+Options -Indexes
+<FilesMatch "\.(md|ps1)$">
+  Require all denied
+</FilesMatch>

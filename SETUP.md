@@ -1,0 +1,178 @@
+# Glossary Skin — Weight Management Landing Page
+
+A static, dependency-free one-pager: plain HTML/CSS/JS on the front end, PHP
+on the back end. No build step, no Node.js required — upload and it runs on
+any Hostinger shared hosting plan.
+
+## File structure
+
+```
+index.html                      the entire page
+assets/css/style.css            all styling + animation
+assets/js/config.js             editable data: programs, testimonials, reels, slots, tracking IDs, media paths, popup timing
+assets/js/main.js               all interactivity (nav, booking modal, form, validation, story carousel, auto-popup)
+assets/php/config.php           editable backend settings: emails, Google Sheet URL
+assets/php/submit-lead.php      receives the booking form, sends email, logs the lead
+assets/php/leads/leads.csv      local backup of every lead (auto-created, blocked from web access)
+assets/php/GOOGLE_APPS_SCRIPT.md   steps to log leads into a Google Sheet
+assets/img/, assets/video/      drop real photography/video in here — see below
+```
+
+## Deploying to Hostinger
+
+1. Upload everything (via File Manager or FTP) into `public_html/` — or a
+   subfolder if this should live at `glossaryskin.com/weight-management/`.
+2. Open `assets/js/config.js` and set `leadEndpoint` to the live path of
+   `submit-lead.php`, e.g. `"/assets/php/submit-lead.php"`.
+3. Open `assets/php/config.php` and confirm `INTERNAL_NOTIFICATION_EMAILS`.
+   PHP's `mail()` works out of the box on Hostinger; no further setup needed
+   for basic delivery.
+4. That's it for a minimum-viable launch — the form now emails your team and
+   backs up every lead to `assets/php/leads/leads.csv`.
+
+## Adding real photography & video
+
+Nothing fabricated ships in this build — every photo/video slot is a
+tasteful placeholder until you drop in a real file. Add files with these
+**exact names** at these **exact paths** and they activate automatically —
+no code changes needed:
+
+| Slot | Path | Spec |
+|---|---|---|
+| Hero card photo | `assets/img/hero-consultation.png` | ✅ added. Any doctor/patient photo works — it's cropped into a small 80×80px square inside the existing green "Virtual Consultation" card (not a full-card background), so a roughly square source crops best. JPG or PNG, under 150KB |
+| TirzeTone card | `assets/img/program-tirzetone.png` | ✅ added. 1280×720px (16:9), under 200KB |
+| SemaTone card | `assets/img/program-sematone.jpg` | 1280×720px (16:9), under 200KB |
+| WegoTone card | `assets/img/program-wegotone.jpg` | 1280×720px (16:9), under 200KB |
+
+**Note on file extensions:** the extension in the filename must match the
+actual image format (a PNG saved with a `.jpg` name will 404 silently in some
+setups). If your browser's "Save image as" defaults to `.png` for an image,
+save it with a `.png` extension — don't rename the extension by hand.
+| Reel 1 video | `assets/video/reel-1.mp4` | 9:16 vertical, ≤15s, MP4 (H.264), under 8MB, no audio needed (plays muted) |
+| Reel 1 poster | `assets/img/reel-1-poster.jpg` | 720×1280px, first-frame still of reel 1 |
+| Reel 2 video / poster | `assets/video/reel-2.mp4` / `assets/img/reel-2-poster.jpg` | same spec as reel 1 |
+| Reel 3 video / poster | `assets/video/reel-3.mp4` / `assets/img/reel-3-poster.jpg` | same spec as reel 1 |
+
+If a file isn't there yet, that slot shows a clean placeholder instead of a
+broken image/video — safe to deploy before all assets are ready, and safe to
+add them one at a time later.
+
+The reels play as an auto-advancing "story" carousel (like Instagram/TikTok):
+each one autoplays muted for `UX_CONFIG.storyDurationMs` (15 seconds by
+default, in `assets/js/config.js`) then advances to the next. Tapping the
+expand button opens the same video full-screen with sound and controls.
+Tapping the left/right edge of the stage jumps manually.
+
+## Pricing — form-gated, not public
+
+Program prices are intentionally not shown anywhere on the public page.
+`PROGRAMS[].priceLabel` in `assets/js/config.js` only surfaces inside the
+booking form, on Step 2, once a visitor selects that program — never before.
+
+## Lead capture — fires from Step 1, not just on final submit
+
+To make sure no lead is lost to drop-off, the form sends a lead to
+`submit-lead.php` **twice**:
+
+1. **Partial** — the instant Step 1 (name, mobile, age, city) is valid. Your
+   team gets an email titled "New Step 1 Lead (Partial)" so you can follow up
+   even if the visitor never finishes.
+2. **Complete** — on final submission, with the full appointment + address
+   details, titled "New Lead: NAME — PROGRAM".
+
+Both are logged to `assets/php/leads/leads.csv` with a `Stage` column so you
+can filter partial vs. complete, and both forward to your Google Sheet (if
+configured) with a `stage` field.
+
+## Auto-popup behaviour
+
+The booking form opens itself once, 5 seconds after page load (skipped if the
+visitor already opened it manually). If they close it without engaging, it
+tries once more, 15 seconds later — then stops. Both delays are configurable
+via `UX_CONFIG.autoOpenDelayMs` / `autoReopenDelayMs` in `config.js`.
+
+## Trackable form-open URL — on every step, not just on open
+
+The page URL changes on **every page of the form**, not only when it first
+opens, so each step is its own distinct, filterable "page" in GA4/Meta Ads
+Manager and you can see exactly where people drop off:
+
+| Step | URL |
+|---|---|
+| 1 — Your Goal | `?form=open&step=1#book-consultation` |
+| 2 — Program Fit | `?form=open&step=2&program=sematone-360#book-consultation` |
+| 3 — Schedule | `?form=open&step=3&program=sematone-360#book-consultation` |
+| 4 — Location | `?form=open&step=4&program=sematone-360#book-consultation` |
+| Success | `?form=open&step=5&program=sematone-360#book-consultation` |
+
+Each transition fires a `ViewContent` event with a matching `virtual_page`
+(e.g. `/book-consultation/step-2-program-fit`) and a `step` number, so you can
+build a proper funnel report instead of just a single "opened the form" event.
+`history.pushState` runs once (on open) and `history.replaceState` on every
+step after that, so the visitor's back-button history stays clean — one entry
+for "the form is open," not one per step. Closing the modal restores the
+original URL; the browser's back button also closes the modal (so it behaves
+like a native app screen, not a broken link).
+
+## Optional: log leads to a Google Sheet
+
+Follow `assets/php/GOOGLE_APPS_SCRIPT.md`, then paste the Web App URL into
+`GOOGLE_SHEET_WEBHOOK_URL` in `assets/php/config.php`. Leads are split across
+two tabs: **Sheet1** holds Step-1-only drop-offs (so they're never lost),
+**Sheet2** holds fully completed bookings — and a lead moves out of Sheet1
+into Sheet2 automatically if they go on to finish the form.
+
+## Performance
+
+- `.htaccess` at the project root enables gzip compression and long-lived
+  browser caching for CSS/JS/images/video on Apache (Hostinger's default) —
+  delete it if your host already handles this, it's additive, not required.
+- Fonts are trimmed to exactly the weights actually used (Playfair Display
+  400/700, Manrope 400/600/700) — fewer font files to download, and loaded
+  with `display=swap` so text renders immediately in a fallback font rather
+  than staying invisible while fonts load.
+- Scroll-driven effects (navbar shadow, top progress bar) share a single
+  `requestAnimationFrame`-throttled listener instead of running on every raw
+  scroll event.
+- The testimonials auto-scroll and the reel story-carousel's timer both fully
+  stop (not just idle) whenever their section is scrolled out of view, via
+  `IntersectionObserver` — nothing animates or ticks off-screen.
+- Below-the-fold images use `loading="lazy"`; the hero image loads eagerly
+  since it's above the fold.
+
+## Optional: interactive map on the location step
+
+Get a Google Maps JavaScript API key, restrict it (Google Cloud Console) to
+your domain and the Maps JavaScript API + Geocoding API, then paste it into
+`googleMapsApiKey` in `assets/js/config.js`. Without a key, the location step
+still works fully via "Use My Current Location" + manual address entry — it
+just skips the visual map.
+
+## Optional: Meta Pixel / GA4 / GTM
+
+Paste the relevant IDs into `assets/js/config.js` (`metaPixelId`, `ga4Id`,
+`gtmId`). Leave any of them blank to skip injecting that script. Every step
+of the funnel already fires the matching event (`PageView`, `ViewContent`,
+`CTA_Click`, `Program_Click`, `Form_Start`, `Form_Step_Completed`,
+`Location_Added`, `Date_Selected`, `Time_Selected`, `Form_Submit`, `Lead`,
+`Booking_Completed`) so ad platforms see the full funnel as soon as IDs are
+added.
+
+## Testing locally before upload
+
+Any static file server works, e.g. from this folder:
+
+```bash
+php -S localhost:8000
+```
+
+Then open `http://localhost:8000`. The booking form will submit successfully
+if PHP's `mail()` is configured locally; if not, the lead is still validated,
+logged to `leads.csv`, and the API responds success (so you can test the full
+front-end flow) — check your terminal for a `mail() failed` warning if so.
+
+## Content sourcing note
+
+Program details, pricing, eligibility criteria, doctor credentials and the
+weight-management testimonials were provided directly by the Glossary Skin
+team or pulled from the live glossaryskin.com site — nothing was invented.
