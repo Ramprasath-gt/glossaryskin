@@ -14,9 +14,20 @@ const SITE_CONFIG = {
   serviceAreas: ["Delhi", "Noida", "Gurugram"],
 
   // Backend endpoint that receives the booking form submission (see
-  // /assets/php/submit-lead.php). Point this at the PHP file's live URL once
-  // deployed on Hostinger, e.g. "https://glossaryskin.com/assets/php/submit-lead.php".
+  // /assets/php/submit-lead.php) for email notifications + local CSV backup.
+  // Point this at the PHP file's live URL once deployed on Hostinger, e.g.
+  // "https://glossaryskin.com/assets/php/submit-lead.php". Only works on a
+  // host that runs PHP — on a static host (e.g. GitHub Pages) this call
+  // silently fails and is skipped, which is fine: googleSheetWebhookUrl below
+  // is what actually has to succeed for a lead to be captured.
   leadEndpoint: "assets/php/submit-lead.php",
+
+  // The same Apps Script Web App URL as GOOGLE_SHEET_WEBHOOK_URL in
+  // assets/php/config.php. Called directly from the browser so leads still
+  // reach the Google Sheet even when hosted somewhere without PHP (e.g.
+  // GitHub Pages) — not a secret, it's a public write-only endpoint. Leave
+  // blank to skip.
+  googleSheetWebhookUrl: "https://script.google.com/macros/s/AKfycbyTLnXCVDxVKAthIU_cfMpBXyQ7oJiSy-exUSPnItMTeZDKZGs1s1QhoZ5FRlpw3WoJhw/exec",
 
   // Google Maps JavaScript API key (public, browser-restricted — NOT a secret).
   // Restrict it in Google Cloud Console to your production domain + the Maps

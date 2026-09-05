@@ -575,15 +575,67 @@ document.querySelector('[data-step-next="1"]').addEventListener("click", () => {
  * the visitor even if it fails (the full submit at the end is what matters
  * for their experience; this is a safety net for the team).
  */
+/**
+ * Builds the row payload for the Google Sheets Apps Script (field names must
+ * match what GOOGLE_APPS_SCRIPT.md's doPost() expects) and posts it straight
+ * from the browser — this is what actually has to succeed for a lead to be
+ * captured, independent of whether the current host can run PHP.
+ */
+function buildSheetPayload(stage) {
+  const d = bookingState.data;
+  const program = PROGRAMS.find((p) => p.id === d.preferredProgram);
+  const programName =
+    d.preferredProgram === "not-sure" ? "Not sure — help me choose" : program ? program.name : d.preferredProgram || "";
+
+  return {
+    stage,
+    fullName: d.fullName || "",
+    mobile: d.mobile || "",
+    email: d.email || "",
+    age: d.age || "",
+    city: d.city || "",
+    currentWeight: d.currentWeight || "",
+    height: d.height || "",
+    weightLossGoal: d.weightLossGoal || "",
+    programName,
+    appointmentDate: d.appointmentDate || "",
+    appointmentTime: d.appointmentTime || "",
+    houseNumber: d.houseNumber || "",
+    area: d.area || "",
+    address: d.address || "",
+    pincode: d.pincode || "",
+    phone: d.phone || "",
+    latitude: d.latitude || "",
+    longitude: d.longitude || "",
+  };
+}
+
+function postToGoogleSheet(stage) {
+  if (!SITE_CONFIG.googleSheetWebhookUrl) return Promise.resolve({ ok: true });
+  // No explicit Content-Type header: fetch defaults a string body to
+  // text/plain, which keeps this a CORS "simple request" — Apps Script Web
+  // Apps don't implement the OPTIONS preflight that application/json would
+  // trigger. Apps Script parses e.postData.contents as JSON regardless.
+  return fetch(SITE_CONFIG.googleSheetWebhookUrl, {
+    method: "POST",
+    body: JSON.stringify(buildSheetPayload(stage)),
+  }).then((res) => res.json().catch(() => ({ ok: true })));
+}
+
 let partialLeadSent = false;
 function capturePartialLead() {
   if (partialLeadSent) return; // one partial lead per session is enough
   partialLeadSent = true;
+
+  // Best-effort — only succeeds on a host that runs PHP (e.g. Hostinger).
   fetch(SITE_CONFIG.leadEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...bookingState.data, leadStage: "partial" }),
-  }).catch(() => {
+  }).catch(() => {});
+
+  // This is the one that actually has to work.
+  postToGoogleSheet("partial").catch(() => {
     partialLeadSent = false; // allow a retry (e.g. on step 2) if the network call itself failed
   });
 }
@@ -870,13 +922,16 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   setError("err_submit", "");
 
   try {
-    const res = await fetch(SITE_CONFIG.leadEndpoint, {
+    // Best-effort — only succeeds on a host that runs PHP (e.g. Hostinger).
+    fetch(SITE_CONFIG.leadEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bookingState.data),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error((json && json.error) || "Something went wrong. Please try again.");
+    }).catch(() => {});
+
+    // This is the one that actually has to work.
+    const json = await postToGoogleSheet("complete");
+    if (!json.ok) throw new Error(json.error || "Something went wrong. Please try again.");
 
     track(TRACK_EVENTS.LEAD, { program: bookingState.data.preferredProgram });
     track(TRACK_EVENTS.BOOKING_COMPLETED, { program: bookingState.data.preferredProgram });
