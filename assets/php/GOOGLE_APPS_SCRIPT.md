@@ -6,11 +6,16 @@ CSV backup still capture every lead).
 
 Leads are split across two tabs in the same spreadsheet:
 
-- **Sheet1** — Step-1-only leads (name/mobile/age/city) who have **not**
-  finished the rest of the form yet. Use this as your "follow up with these
-  people" list.
-- **Sheet2** — leads who completed all 4 steps, with the full appointment +
+- **Sheet1** — Step-1-only leads (name/mobile/email/city/interest) who have
+  **not** finished the rest of the form yet. Use this as your "follow up with
+  these people" list.
+- **Sheet2** — leads who completed all 3 steps, with the full appointment +
   address details.
+
+"Interest"/"Program" values are one of the five options a visitor can pick
+in the form — matching the five Meta ad audiences: `GLP-1 Weight Management`,
+`Abdomen Inch Loss`, `Hips Inch Loss`, `Thighs Inch Loss`, or
+`I'm Not Sure — Help Me Choose`.
 
 This is exclusive, not additive: if someone who's in Sheet1 goes on to
 finish the form, their Sheet1 row is automatically deleted and a full row is
@@ -33,9 +38,9 @@ function doPost(e) {
   if (isPartial) {
     var sheet1 = ss.getSheetByName("Sheet1") || ss.insertSheet("Sheet1");
     if (sheet1.getLastRow() === 0) {
-      sheet1.appendRow(["Timestamp", "Full Name", "Mobile", "Age", "City"]);
+      sheet1.appendRow(["Timestamp", "Full Name", "Mobile", "Email", "City", "Interest"]);
     }
-    sheet1.appendRow([new Date(), data.fullName, data.mobile, data.age, data.city]);
+    sheet1.appendRow([new Date(), data.fullName, data.mobile, data.email, data.city, data.programName]);
     return respond();
   }
 
@@ -55,14 +60,13 @@ function doPost(e) {
   var sheet2 = ss.getSheetByName("Sheet2") || ss.insertSheet("Sheet2");
   if (sheet2.getLastRow() === 0) {
     sheet2.appendRow([
-      "Timestamp", "Full Name", "Mobile", "Email", "Age", "City", "Weight (kg)",
-      "Height (cm)", "Goal", "Program", "Date", "Time", "House/Flat", "Area",
+      "Timestamp", "Full Name", "Mobile", "Email", "City", "Interest",
+      "Date", "Time", "House/Flat", "Area",
       "Address", "Pincode", "Phone", "Latitude", "Longitude",
     ]);
   }
   sheet2.appendRow([
-    new Date(), data.fullName, data.mobile, data.email || "", data.age, data.city,
-    data.currentWeight || "", data.height || "", data.weightLossGoal || "", data.programName || "",
+    new Date(), data.fullName, data.mobile, data.email || "", data.city, data.programName || "",
     data.appointmentDate || "", data.appointmentTime || "", data.houseNumber || "",
     data.area || "", data.address || "", data.pincode || "", data.phone || "",
     data.latitude || "", data.longitude || "",

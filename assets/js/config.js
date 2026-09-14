@@ -42,131 +42,104 @@ const SITE_CONFIG = {
 };
 
 // -----------------------------------------------------------------------------
-// UX TIMING — auto-popup + story-reel behaviour.
+// UX TIMING — auto-popup behaviour.
 // -----------------------------------------------------------------------------
 const UX_CONFIG = {
-  // First automatic booking-form popup, ms after page load (skipped if the
-  // visitor already opened the form manually before this fires).
-  autoOpenDelayMs: 5000,
+  // Fallback timer for the first automatic booking-form popup — only used if
+  // the visitor hasn't already scrolled to the "Two Clear Paths" section
+  // (which triggers the popup immediately, since reaching it means they've
+  // had a chance to confirm their service is on the page). Skipped entirely
+  // if the visitor already opened the form manually before either fires.
+  autoOpenDelayMs: 20000,
   // If the visitor closes that first popup, a second (final) attempt fires
   // this many ms later. No further auto-popups after that.
   autoReopenDelayMs: 15000,
-  // How long each reel "story" auto-plays before advancing to the next one.
-  storyDurationMs: 15000,
-};
-
-// -----------------------------------------------------------------------------
-// MEDIA — drop files in with these EXACT names and they activate automatically,
-// no code changes needed. Until a file exists at a path, the page shows a
-// tasteful placeholder instead of a broken image/video. See SETUP.md → "Adding
-// real photography & video" for exact specs (dimensions, format, size).
-// -----------------------------------------------------------------------------
-const MEDIA = {
-  programImages: {
-    "tirzetone-360": "assets/img/program-tirzetone.png",
-    "sematone-360": "assets/img/program-sematone.png",
-    "wegotone-360": "assets/img/program-wegotone.webp",
-  },
 };
 
 // -----------------------------------------------------------------------------
 // TRUST BADGES — "Why Clients Choose Glossary" photo grid.
 // -----------------------------------------------------------------------------
 const TRUST_BADGES = [
-  { label: "Certified Doctors", image: "assets/img/trust-certified-doctors.png" },
-  { label: "Premium At-Home Treatments", image: "assets/img/trust-at-home-treatments.png" },
-  { label: "Personalized Care", image: "assets/img/trust-personalized-care.png" },
-  { label: "Medical Supervision", image: "assets/img/trust-medical-supervision.png" },
-  { label: "Structured Monitoring", image: "assets/img/trust-structured-monitoring.png" },
-  { label: "Private & Convenient Experience", image: "assets/img/trust-private-experience.png" },
+  { label: "Certified Doctors", image: "assets/img/trust-certified-doctors.webp" },
+  { label: "Premium At-Home Treatments", image: "assets/img/trust-at-home-treatments.webp" },
+  { label: "Personalized Care", image: "assets/img/trust-personalized-care.webp" },
+  { label: "Medical Supervision", image: "assets/img/trust-medical-supervision.webp" },
+  { label: "Structured Monitoring", image: "assets/img/trust-structured-monitoring.webp" },
+  { label: "Private & Convenient Experience", image: "assets/img/trust-private-experience.webp" },
+];
+
+// Real, verified credential shown as a caption over the featured "Certified
+// Doctors" photo above (TRUST_BADGES[0]). Only edit this alongside that
+// image — the two must stay in sync with whoever is actually pictured.
+const FEATURED_DOCTOR = {
+  name: "Dr. Shah Nawaz",
+  credential: "MD Medicine · Royal College of Physicians, UK",
+  experience: "25+ Years of Experience",
+};
+
+// -----------------------------------------------------------------------------
+// INTEREST OPTIONS — the segmentation question in the booking modal ("What
+// Are You Interested In?"), matching the five Meta ad audiences 1:1 so every
+// lead is captured with the intent it arrived with. priceLabel only shows a
+// public starting price for the inch-loss treatments — GLP-1 pricing is never
+// shown here (shared during consultation instead).
+// -----------------------------------------------------------------------------
+const INTEREST_OPTIONS = [
+  { id: "glp1", label: "GLP-1 Weight Management", priceLabel: "" },
+  { id: "abdomen", label: "Abdomen Inch Loss", priceLabel: "Starting from ₹4,050" },
+  { id: "hips", label: "Hips Inch Loss", priceLabel: "Starting from ₹4,050" },
+  { id: "thighs", label: "Thighs Inch Loss", priceLabel: "Starting from ₹4,050" },
+  { id: "not-sure", label: "I'm Not Sure — Help Me Choose", priceLabel: "" },
 ];
 
 // -----------------------------------------------------------------------------
-// PROGRAMS — sourced from glossaryskin.com/treatment/{slug} pages.
-// -----------------------------------------------------------------------------
-const PROGRAMS = [
-  {
-    id: "tirzetone-360",
-    name: "TirzeTone 360",
-    positioning: "Doctor-led GLP-1 weight management paired with advanced body contouring.",
-    priceLabel: "₹60,000",
-    inclusions: [
-      "Online consultation with an Endocrinologist / medical expert",
-      "Prescription-based weekly clinical protocol",
-      "Doctor-led dose titration and adjustments",
-      "Advanced body contouring (Cavitation + RF + EMS)",
-      "Personalised nutritionist meal plans",
-      "Monthly progress check-ins",
-    ],
-  },
-  {
-    id: "sematone-360",
-    name: "SemaTone 360",
-    positioning: "GLP-1 weight management with medical monitoring, nutrition support and weekly slimming sessions.",
-    priceLabel: "₹40,374",
-    inclusions: [
-      "Weekly doctor-supervised metabolic protocol",
-      "Weekly body-slimming sessions",
-      "Dietician consultations",
-      "Medical diagnostics and monitoring",
-      "Lifestyle coaching",
-      "GI-relief kit for side-effect support",
-      "Optional maintenance after 90 days",
-    ],
-  },
-  {
-    id: "wegotone-360",
-    name: "WegoTone 360",
-    positioning: "Doctor-guided GLP-1 weight management combined with structured body-slimming support.",
-    priceLabel: "₹56,171",
-    inclusions: [
-      "Weekly doctor-supervised metabolic protocol",
-      "Weekly body-slimming sessions",
-      "Dietician consultations",
-      "Medical diagnostics and monitoring",
-      "Lifestyle coaching",
-      "GI-relief kit for side-effect support",
-      "Optional maintenance after 90 days",
-    ],
-  },
-];
-
-// -----------------------------------------------------------------------------
-// TESTIMONIALS — provided directly by the Glossary Skin team, one per program.
+// TESTIMONIALS — provided directly by the Glossary Skin team. Quotes and names
+// are unchanged from the original.
 // -----------------------------------------------------------------------------
 const TESTIMONIALS = [
   {
-    name: "Arjun Mehta",
-    service: "TirzeTone 360",
+    name: "Nandini Rao",
+    service: "GLP-1 Weight Management",
     quote:
-      "The TirzeTone 360 program gave me a much more structured approach to my weight-management journey. The doctor explained everything clearly, monitored my progress and guided me throughout the process. I also really appreciated the body-contouring sessions and the overall professional experience.",
+      "What I liked most was that I wasn't simply given a treatment and left on my own. The doctor took the time to understand my goals and explained the GLP-1 approach clearly. <strong>The regular follow-ups and nutrition guidance made the whole process feel much more structured.</strong> I always knew what the next step was.",
   },
   {
-    name: "Sneha Kapoor",
-    service: "SemaTone 360",
+    name: "Meera Nair",
+    service: "Abdomen Inch Loss",
     quote:
-      "I'm really happy with my experience with SemaTone 360. The regular doctor consultations, dietician support and weekly slimming sessions made the program easy to follow. The team was professional, supportive and attentive throughout.",
+      "I specifically wanted to work on my abdomen, and the team explained the treatment properly before starting. <strong>The session was comfortable and the overall experience felt very professional.</strong>",
   },
   {
-    name: "Rahul Sharma",
-    service: "WegoTone 360",
+    name: "Rhea Menon",
+    service: "GLP-1 Weight Management",
     quote:
-      "WegoTone 360 has been a positive experience for me. I liked having regular medical guidance along with dietician support and weekly body-slimming sessions. Everything was explained properly, and the team made the entire process comfortable and well managed.",
+      "I was honestly quite unsure about GLP-1 when I first enquired. <strong>The consultation helped me understand whether it was appropriate for me instead of feeling like I was being pushed into it.</strong> I really appreciated that approach.",
   },
   {
-    name: "Ananya Iyer",
-    service: "Weight Management Program",
+    name: "Aishwarya Kulkarni",
+    service: "Hips Inch Loss",
     quote:
-      "What I liked most was that the weight-management program wasn't just about one treatment. I received medical guidance, nutrition support and regular monitoring throughout the journey. The team was professional, approachable and made me feel supported at every step.",
+      "I came in specifically for my hips and liked how clearly everything was explained. <strong>The treatment itself was relaxing, and the team was attentive throughout.</strong>",
+  },
+  {
+    name: "Sahana Iyer",
+    service: "Thighs Inch Loss",
+    quote:
+      "The biggest difference for me was the overall experience. From the initial consultation to the treatment sessions, <strong>everyone was patient and explained what they were doing.</strong> I was looking for something focused on my thighs rather than another general weight-loss plan, so having an area-specific treatment made sense for what I wanted.",
+  },
+  {
+    name: "Kavya Shetty",
+    service: "Weight Management & Body Contouring",
+    quote:
+      "I initially came to Glossary for weight management, but I also wanted to understand what could be done for specific areas. I liked that the team looked at the bigger picture instead of immediately recommending one treatment. <strong>The consultation felt personal and the follow-up was reassuring.</strong>",
   },
 ];
 
 // -----------------------------------------------------------------------------
-// REELS — story-style, auto-advancing every UX_CONFIG.storyDurationMs.
-// Drop video files in at these EXACT paths (assets/video/reel-1.mp4, etc, with
-// matching posters in assets/img/) and they activate automatically — until a
-// file exists there, that slot shows a tasteful placeholder instead of a
-// broken/fabricated video. See SETUP.md for exact specs.
+// REELS — shown as a 4-up phone-mockup grid; tapping a tile opens that video
+// full-screen with sound. Drop video files in at these EXACT paths
+// (assets/video/reel-1.mp4, etc, with matching posters in assets/img/) and
+// they activate automatically. See SETUP.md for exact specs.
 // -----------------------------------------------------------------------------
 const REELS = [
   {
@@ -190,30 +163,22 @@ const REELS = [
     posterUrl: "assets/img/reel-3-poster.jpg",
     videoUrl: "assets/video/reel-3.mp4",
   },
+  {
+    id: "spa-experience",
+    title: "Inside a Treatment Session",
+    caption: "A look at the calm, spa-grade setting every session takes place in.",
+    posterUrl: "assets/img/reel-4-poster.jpg",
+    videoUrl: "assets/video/reel-4.mp4",
+  },
 ];
 
 // -----------------------------------------------------------------------------
-// APPOINTMENT SLOTS — placeholder availability, not a live calendar feed.
-// Swap getAvailableSlots() for a real availability API call later; keep the
-// same return shape ([{id,label,period}]) and nothing else needs to change.
+// TIME PREFERENCES — the booking modal asks which part of the day works
+// best rather than a specific slot. There's no live calendar/slot-availability
+// system behind this yet, so offering an exact time (e.g. "2:00 PM") would
+// imply real-time availability that isn't actually being checked — a general
+// preference is both simpler to choose from and honest about what it is.
+// The team confirms the exact time when they call. Swap this for a real
+// slot-picker once live availability exists.
 // -----------------------------------------------------------------------------
-const DAILY_SLOTS = [
-  { id: "10-00", label: "10:00 AM", period: "Morning" },
-  { id: "11-00", label: "11:00 AM", period: "Morning" },
-  { id: "12-00", label: "12:00 PM", period: "Morning" },
-  { id: "13-00", label: "1:00 PM", period: "Afternoon" },
-  { id: "14-00", label: "2:00 PM", period: "Afternoon" },
-  { id: "15-00", label: "3:00 PM", period: "Afternoon" },
-  { id: "16-00", label: "4:00 PM", period: "Afternoon" },
-  { id: "17-00", label: "5:00 PM", period: "Evening" },
-  { id: "18-00", label: "6:00 PM", period: "Evening" },
-  { id: "19-00", label: "7:00 PM", period: "Evening" },
-];
-
-function getAvailableSlots(dateISO) {
-  const date = new Date(dateISO + "T00:00:00");
-  const seed = date.getDate();
-  return DAILY_SLOTS.filter((_, i) => (seed + i) % 5 !== 0);
-}
-
-const WEIGHT_LOSS_GOALS = ["Lose under 5 kg", "Lose 5–10 kg", "Lose 10–20 kg", "Lose 20+ kg"];
+const TIME_PREFERENCES = ["Anytime", "Morning", "Afternoon", "Evening"];

@@ -6,9 +6,14 @@
 # =============================================================================
 
 # ---- Compression -------------------------------------------------------------
+# Both JS MIME types are listed — Apache/mod_mime configs vary on whether
+# .js is served as application/javascript (older) or text/javascript (the
+# current IANA-registered type many hosts, including some shared Apache
+# setups, now default to). Missing either one silently skips gzip on
+# main.js/config.js with no visible error, so both are covered defensively.
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
-  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/javascript text/javascript application/json
   AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
 
@@ -17,6 +22,7 @@
   ExpiresActive On
   ExpiresByType text/css                "access plus 1 year"
   ExpiresByType application/javascript  "access plus 1 year"
+  ExpiresByType text/javascript         "access plus 1 year"
   ExpiresByType image/jpeg              "access plus 1 year"
   ExpiresByType image/png               "access plus 1 year"
   ExpiresByType image/webp              "access plus 1 year"
@@ -36,3 +42,21 @@ Options -Indexes
 <FilesMatch "\.(md|ps1)$">
   Require all denied
 </FilesMatch>
+
+# ---- Clean URL for the post-conversion confirmation page -----------------
+# /enquiry-confirmed (no extension, as used in the redirect + as the
+# intended Meta Ads / GA4 conversion destination URL) serves the physical
+# enquiry-confirmed.html file. Never linked from anywhere on the site —
+# only reached via the successful-submission redirect in main.js.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^enquiry-confirmed/?$ enquiry-confirmed.html [L]
+</IfModule>
+
+# Defense-in-depth alongside the page's own <meta name="robots"> tag.
+<IfModule mod_headers.c>
+  <FilesMatch "^enquiry-confirmed\.html$">
+    Header set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+</IfModule>
