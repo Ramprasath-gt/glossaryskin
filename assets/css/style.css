@@ -656,6 +656,22 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .treatment-card:hover .treatment-card__visual img.is-loaded { transform: scale(1.02); }
 .treatment-card__visual span { position: relative; font-family: var(--font-serif); font-size: 1.3rem; color: var(--forest-700); }
 .treatment-card__visual:has(img.is-loaded) span { display: none; }
+/* EMSCULPT has no real treatment photo yet (placeholder pending a licensed
+   one) — rather than a plain "no image" gap, this doubles as the editorial
+   "20,000 contractions" technology callout the card needs anyway. Static,
+   not the shimmer-loading animation (nothing is ever going to load here). */
+.treatment-card__visual--tech {
+  animation: none; background: linear-gradient(160deg, var(--forest-900), var(--brand-green));
+  flex-direction: column; padding: 1rem;
+}
+.treatment-card__pulse { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.8; }
+.treatment-card__stat { position: relative; text-align: center; }
+.treatment-card__stat-num { display: block; font-family: var(--font-serif); font-size: 2.4rem; line-height: 1; color: #fff; }
+.treatment-card__stat-label {
+  display: block; margin-top: 0.4rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ivory-100);
+}
+.treatment-card__stat-sub { display: block; margin-top: 0.2rem; font-size: 0.72rem; color: var(--forest-300); }
 .treatment-card__body { display: flex; flex-direction: column; flex: 1; padding: 0 0.4rem 1.6rem; }
 .treatment-card__body h3 { font-size: 1.2rem; }
 .treatment-card__subtitle { margin-top: 0.4rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--bronze); }
@@ -698,7 +714,8 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 }
 .term-tip:hover::after, .term-tip:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@media (min-width: 1024px) { .contouring { padding: 6rem 0; } .contouring__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 640px) { .contouring__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .contouring { padding: 6rem 0; } }
 
 /* =============================================================================
    TREATMENT TECHNOLOGY

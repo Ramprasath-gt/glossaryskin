@@ -96,6 +96,7 @@ const INTEREST_OPTIONS = [
   { id: "abdomen", label: "Abdomen Inch Loss", priceLabel: "Starting from ₹4,050" },
   { id: "hips", label: "Hips Inch Loss", priceLabel: "Starting from ₹4,050" },
   { id: "thighs", label: "Thighs Inch Loss", priceLabel: "Starting from ₹4,050" },
+  { id: "emsculpt", label: "EMSCULPT", priceLabel: "Starting from ₹10,000" },
   { id: "not-sure", label: "I'm Not Sure — Help Me Choose", priceLabel: "" },
 ];
 
