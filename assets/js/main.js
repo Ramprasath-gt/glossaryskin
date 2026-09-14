@@ -600,7 +600,7 @@ function closeBooking(opts) {
   stickyCta.classList.remove("is-hidden");
   document.body.classList.remove("modal-open");
   if (!(opts && opts.fromPopState)) popModalUrl();
-  scheduleSecondPopup();
+  scheduleAutoReopen();
   if (modalTriggerEl && document.body.contains(modalTriggerEl)) modalTriggerEl.focus();
   modalTriggerEl = null;
 }
@@ -1098,19 +1098,18 @@ function redirectToConfirmation() {
 
 /* -----------------------------------------------------------------------
    AUTO-POPUP — fires once the visitor has actually had a chance to confirm
-   relevance (reached the "Two Clear Paths" section), or after a longer
-   fallback delay for visitors who read without scrolling much. Previously
-   this fired on a flat 5s timer regardless of scroll position, which risked
-   interrupting an Abdomen/Hips/Thighs visitor before they'd seen anything
-   confirming their specific service was even on the page. A single second
-   attempt follows 15s after the visitor closes the first one. Never fires if
-   they already opened the form themselves, and never nags a third time.
+   relevance (reached the "Two Clear Paths" section), or after a shorter
+   fallback delay (UX_CONFIG.autoOpenDelayMs) for visitors who read without
+   scrolling much. If the visitor closes it without completing the form, it
+   keeps reopening every UX_CONFIG.autoReopenDelayMs — capped at
+   UX_CONFIG.maxAutoReopens so it can't nag a genuinely uninterested visitor
+   forever. Never fires at all if they already opened the form themselves.
 ------------------------------------------------------------------------ */
 let hasManuallyOpened = false;
-let secondPopupShown = false;
 let firstAutoPopupHappened = false;
 let bookingCompleted = false;
 let autoPopupFired = false;
+let autoReopenCount = 0;
 
 function maybeShowFirstPopup(source) {
   if (autoPopupFired || hasManuallyOpened || overlay.classList.contains("is-open")) return;
@@ -1135,19 +1134,19 @@ if (autoPopupTrigger) {
   autoPopupObserver.observe(autoPopupTrigger);
 }
 
-// Fallback for visitors who read attentively without scrolling far — fires
-// later than before (UX_CONFIG.autoOpenDelayMs, now 20s by default) rather
-// than the previous flat 5s.
+// Fallback for visitors who read attentively without scrolling far.
 setTimeout(() => {
   maybeShowFirstPopup("auto_popup_timeout");
 }, UX_CONFIG.autoOpenDelayMs);
 
-function scheduleSecondPopup() {
-  if (!firstAutoPopupHappened || secondPopupShown || hasManuallyOpened) return;
-  secondPopupShown = true;
+function scheduleAutoReopen() {
+  if (!firstAutoPopupHappened || hasManuallyOpened || bookingCompleted) return;
+  if (autoReopenCount >= UX_CONFIG.maxAutoReopens) return;
+  autoReopenCount += 1;
+  const attempt = autoReopenCount;
   setTimeout(() => {
     if (!overlay.classList.contains("is-open") && !hasManuallyOpened && !bookingCompleted) {
-      openBooking(undefined, "auto_popup_15s");
+      openBooking(undefined, `auto_popup_reopen_${attempt}`);
     }
   }, UX_CONFIG.autoReopenDelayMs);
 }

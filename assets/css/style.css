@@ -698,7 +698,8 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 }
 .term-tip:hover::after, .term-tip:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@media (min-width: 1024px) { .contouring { padding: 6rem 0; } .contouring__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 640px) { .contouring__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .contouring { padding: 6rem 0; } }
 
 /* =============================================================================
    TREATMENT TECHNOLOGY
