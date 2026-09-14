@@ -12,9 +12,9 @@ Leads are split across two tabs in the same spreadsheet:
 - **Final** — leads who completed all 4 steps, with the full appointment +
   address details.
 
-"Interest"/"Program" values are one of the five options a visitor can pick
-in the form — matching the five Meta ad audiences: `GLP-1 Weight Management`,
-`Abdomen Inch Loss`, `Hips Inch Loss`, `Thighs Inch Loss`, or
+"Interest"/"Program" values are one of the six options a visitor can pick
+in the form — matching the Meta ad audiences: `GLP-1 Weight Management`,
+`Abdomen Inch Loss`, `Hips Inch Loss`, `Thighs Inch Loss`, `EMSCULPT`, or
 `I'm Not Sure — Help Me Choose`.
 
 This is exclusive, not additive: if someone who's in Step1 goes on to
