@@ -50,10 +50,17 @@ const UX_CONFIG = {
   // (which triggers the popup immediately, since reaching it means they've
   // had a chance to confirm their service is on the page). Skipped entirely
   // if the visitor already opened the form manually before either fires.
-  autoOpenDelayMs: 20000,
-  // If the visitor closes that first popup, a second (final) attempt fires
-  // this many ms later. No further auto-popups after that.
-  autoReopenDelayMs: 15000,
+  autoOpenDelayMs: 5000,
+  // Every time the visitor closes an auto-opened popup without completing
+  // the form, it reopens again after this delay — repeating, not a single
+  // second attempt, per the current campaign strategy.
+  autoReopenDelayMs: 10000,
+  // Safety cap on how many times the auto-popup can reopen itself in one
+  // session (on top of the first appearance) — keeps "keeps coming back"
+  // from becoming a literal infinite loop that never stops nagging a visitor
+  // who has no intention of booking. Raise or remove if you've decided
+  // that's genuinely worth the bounce-rate risk.
+  maxAutoReopens: 4,
 };
 
 // -----------------------------------------------------------------------------
