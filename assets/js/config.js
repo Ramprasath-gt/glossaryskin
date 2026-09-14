@@ -27,7 +27,7 @@ const SITE_CONFIG = {
   // reach the Google Sheet even when hosted somewhere without PHP (e.g.
   // GitHub Pages) — not a secret, it's a public write-only endpoint. Leave
   // blank to skip.
-  googleSheetWebhookUrl: "https://script.google.com/macros/s/AKfycbyTLnXCVDxVKAthIU_cfMpBXyQ7oJiSy-exUSPnItMTeZDKZGs1s1QhoZ5FRlpw3WoJhw/exec",
+  googleSheetWebhookUrl: "https://script.google.com/macros/s/AKfycbzbOp0FCQ0_re7rBEBC12UxIJ9OlapM9SYL8nuBLttKZeYYJPQ7t32yoaeSxAkzIOooOg/exec",
 
   // Google Maps JavaScript API key (public, browser-restricted — NOT a secret).
   // Restrict it in Google Cloud Console to your production domain + the Maps
