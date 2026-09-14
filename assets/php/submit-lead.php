@@ -34,19 +34,18 @@ if (!is_array($lead)) {
 }
 
 // ---- Validation --------------------------------------------------------------
-// A "partial" submission fires right after Step 1 (name/mobile/age/city) so a
-// lead is captured even if the visitor never finishes the rest of the form.
-// It gets the same treatment as a full lead (logged + emailed to the team)
-// but with a relaxed required-field list and no customer confirmation email
-// (there's no appointment to confirm yet).
+// A "partial" submission fires right after Step 1 (name/mobile/email/city/
+// interest) so a lead is captured even if the visitor never finishes the rest
+// of the form. It gets the same treatment as a full lead (logged + emailed to
+// the team) but with a relaxed required-field list and no customer
+// confirmation email (there's no appointment to confirm yet).
 $isPartial = (($lead['leadStage'] ?? '') === 'partial');
 
 $required = $isPartial
-    ? ['fullName', 'mobile', 'age', 'city']
+    ? ['fullName', 'mobile', 'email', 'city', 'preferredProgram']
     : [
-        'fullName', 'mobile', 'age', 'city', 'currentWeight', 'height',
-        'weightLossGoal', 'preferredProgram', 'appointmentDate', 'appointmentTime',
-        'address', 'area', 'pincode', 'phone',
+        'fullName', 'mobile', 'email', 'city', 'preferredProgram',
+        'appointmentDate', 'appointmentTime', 'address', 'area', 'pincode', 'phone',
     ];
 foreach ($required as $field) {
     if (empty($lead[$field]) || trim((string) $lead[$field]) === '') {
@@ -90,10 +89,11 @@ foreach ($lead as $key => $value) {
 }
 
 $programNames = [
-    'tirzetone-360' => 'TirzeTone 360',
-    'sematone-360'  => 'SemaTone 360',
-    'wegotone-360'  => 'WegoTone 360',
-    'not-sure'      => 'Not sure — help me choose',
+    'glp1'     => 'GLP-1 Weight Management',
+    'abdomen'  => 'Abdomen Inch Loss',
+    'hips'     => 'Hips Inch Loss',
+    'thighs'   => 'Thighs Inch Loss',
+    'not-sure' => "I'm Not Sure — Help Me Choose",
 ];
 $programKey = $lead['preferredProgram'] ?? '';
 $programName = $programKey === '' ? 'Not yet selected' : ($programNames[$programKey] ?? $programKey);
@@ -137,16 +137,15 @@ function log_lead_to_csv($lead, $programName, $isPartial)
 
     if ($isNew) {
         fputcsv($fh, [
-            'Timestamp', 'Stage', 'Full Name', 'Mobile', 'Email', 'Age', 'City', 'Weight (kg)',
-            'Height (cm)', 'Goal', 'Program', 'Date', 'Time', 'House/Flat', 'Area',
+            'Timestamp', 'Stage', 'Full Name', 'Mobile', 'Email', 'City', 'Interest',
+            'Date', 'Time', 'House/Flat', 'Area',
             'Address', 'Pincode', 'Phone', 'Latitude', 'Longitude',
         ]);
     }
 
     fputcsv($fh, [
         date('Y-m-d H:i:s'), $isPartial ? 'Partial (Step 1)' : 'Complete',
-        $lead['fullName'] ?? '', $lead['mobile'] ?? '', $lead['email'] ?? '', $lead['age'] ?? '', $lead['city'] ?? '',
-        $lead['currentWeight'] ?? '', $lead['height'] ?? '', $lead['weightLossGoal'] ?? '', $programName,
+        $lead['fullName'] ?? '', $lead['mobile'] ?? '', $lead['email'] ?? '', $lead['city'] ?? '', $programName,
         $lead['appointmentDate'] ?? '', $lead['appointmentTime'] ?? '', $lead['houseNumber'] ?? '', $lead['area'] ?? '',
         $lead['address'] ?? '', $lead['pincode'] ?? '', $lead['phone'] ?? '',
         $lead['latitude'] ?? '', $lead['longitude'] ?? '',
@@ -274,17 +273,13 @@ function internal_email_html($lead, $programName, $isPartial)
         'Full Name' => $lead['fullName'] ?? '',
         'Mobile' => $lead['mobile'] ?? '',
         'Email' => $lead['email'] ?? '—',
-        'Age' => $lead['age'] ?? '',
         'City' => $lead['city'] ?? '',
+        'Interested In' => $programName,
     ];
 
     if ($isPartial) {
         $rows['Status'] = 'Filled Step 1 only — has not completed the booking form yet. Follow up directly.';
     } else {
-        $rows['Current Weight (kg)'] = $lead['currentWeight'] ?? '';
-        $rows['Height (cm)'] = $lead['height'] ?? '';
-        $rows['Weight-loss Goal'] = $lead['weightLossGoal'] ?? '';
-        $rows['Preferred Program'] = $programName;
         $rows['Appointment Date'] = format_date_pretty($lead['appointmentDate'] ?? '');
         $rows['Appointment Time'] = $lead['appointmentTime'] ?? '';
         $rows['House/Flat/Unit'] = $lead['houseNumber'] ?? '';

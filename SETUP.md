@@ -39,10 +39,10 @@ no code changes needed:
 
 | Slot | Path | Spec |
 |---|---|---|
-| Hero card photo | `assets/img/hero-consultation.png` | ✅ added. Any doctor/patient photo works — it's cropped into a small 80×80px square inside the existing green "Virtual Consultation" card (not a full-card background), so a roughly square source crops best. JPG or PNG, under 150KB |
-| TirzeTone card | `assets/img/program-tirzetone.png` | ✅ added. 1280×720px (16:9), under 200KB |
-| SemaTone card | `assets/img/program-sematone.jpg` | 1280×720px (16:9), under 200KB |
-| WegoTone card | `assets/img/program-wegotone.jpg` | 1280×720px (16:9), under 200KB |
+| Hero cutout photo | `assets/img/hero-doctors.webp` | ✅ added. Doctor/medical-team cutout, transparent background works best |
+| Abdomen Inch Loss card | `assets/img/treatment-abdomen.jpg` | 1280×720px (16:9), under 200KB |
+| Hips Inch Loss card | `assets/img/treatment-hips.jpg` | 1280×720px (16:9), under 200KB |
+| Thighs Inch Loss card | `assets/img/treatment-thighs.jpg` | 1280×720px (16:9), under 200KB |
 
 **Note on file extensions:** the extension in the filename must match the
 actual image format (a PNG saved with a `.jpg` name will 404 silently in some
@@ -52,33 +52,34 @@ save it with a `.png` extension — don't rename the extension by hand.
 | Reel 1 poster | `assets/img/reel-1-poster.jpg` | 720×1280px, first-frame still of reel 1 |
 | Reel 2 video / poster | `assets/video/reel-2.mp4` / `assets/img/reel-2-poster.jpg` | same spec as reel 1 |
 | Reel 3 video / poster | `assets/video/reel-3.mp4` / `assets/img/reel-3-poster.jpg` | same spec as reel 1 |
+| Reel 4 video / poster | `assets/video/reel-4.mp4` / `assets/img/reel-4-poster.jpg` | same spec as reel 1 |
 
-If a file isn't there yet, that slot shows a clean placeholder instead of a
-broken image/video — safe to deploy before all assets are ready, and safe to
-add them one at a time later.
+If a file isn't there yet, that tile just won't open a player on click — safe
+to deploy before all assets are ready, and safe to add them one at a time
+later.
 
-The reels play as an auto-advancing "story" carousel (like Instagram/TikTok):
-each one autoplays muted for `UX_CONFIG.storyDurationMs` (15 seconds by
-default, in `assets/js/config.js`) then advances to the next. Tapping the
-expand button opens the same video full-screen with sound and controls.
-Tapping the left/right edge of the stage jumps manually.
+The reels are shown as a 4-up "phone mockup" grid — each tile is a poster
+image inside a CSS phone-bezel frame with a play button. Tapping any tile
+opens that video full-screen with sound and controls.
 
 ## Pricing — form-gated, not public
 
-Program prices are intentionally not shown anywhere on the public page.
-`PROGRAMS[].priceLabel` in `assets/js/config.js` only surfaces inside the
-booking form, on Step 2, once a visitor selects that program — never before.
+GLP-1 pricing is never shown on the public page. The inch-loss treatments'
+starting price (₹4,050) IS shown publicly on their cards, matching what the
+Meta ads themselves already promise — but `INTEREST_OPTIONS[].priceLabel` in
+`assets/js/config.js` is what drives the price shown inside the booking
+form (Step 1) once a visitor picks that option.
 
 ## Lead capture — fires from Step 1, not just on final submit
 
 To make sure no lead is lost to drop-off, the form sends a lead to
 `submit-lead.php` **twice**:
 
-1. **Partial** — the instant Step 1 (name, mobile, age, city) is valid. Your
-   team gets an email titled "New Step 1 Lead (Partial)" so you can follow up
-   even if the visitor never finishes.
+1. **Partial** — the instant Step 1 (name, phone, email, city, interest) is
+   valid. Your team gets an email titled "New Step 1 Lead (Partial)" so you
+   can follow up even if the visitor never finishes.
 2. **Complete** — on final submission, with the full appointment + address
-   details, titled "New Lead: NAME — PROGRAM".
+   details, titled "New Lead: NAME — INTEREST".
 
 Both are logged to `assets/php/leads/leads.csv` with a `Stage` column so you
 can filter partial vs. complete, and both forward to your Google Sheet (if
@@ -86,10 +87,21 @@ configured) with a `stage` field.
 
 ## Auto-popup behaviour
 
-The booking form opens itself once, 5 seconds after page load (skipped if the
-visitor already opened it manually). If they close it without engaging, it
-tries once more, 15 seconds later — then stops. Both delays are configurable
-via `UX_CONFIG.autoOpenDelayMs` / `autoReopenDelayMs` in `config.js`.
+The booking form opens itself once — either as soon as the visitor scrolls to
+the "Two Clear Paths" section (having had a chance to confirm their service
+is on the page), or after a 20-second fallback for visitors who read without
+scrolling far, whichever comes first. Skipped entirely if the visitor already
+opened it manually. If they close it without engaging, it tries once more, 15
+seconds later — then stops. The fallback delay and the re-open delay are both
+configurable via `UX_CONFIG.autoOpenDelayMs` / `autoReopenDelayMs` in
+`config.js`; the scroll trigger itself watches `#programs` in `main.js`.
+
+### Optional: contextual preselection from the ad URL
+
+If a Meta ad's destination URL includes `?service=abdomen` (or `glp1` /
+`hips` / `thighs` / `not-sure`), the booking form pre-selects that interest
+before the visitor even opens it. This is inert until the ad URLs are
+actually updated to include the parameter — nothing currently sends it.
 
 ## Trackable form-open URL — on every step, not just on open
 
@@ -100,13 +112,15 @@ Manager and you can see exactly where people drop off:
 | Step | URL |
 |---|---|
 | 1 — Your Goal | `?form=open&step=1#book-consultation` |
-| 2 — Program Fit | `?form=open&step=2&program=sematone-360#book-consultation` |
-| 3 — Schedule | `?form=open&step=3&program=sematone-360#book-consultation` |
-| 4 — Location | `?form=open&step=4&program=sematone-360#book-consultation` |
-| Success | `?form=open&step=5&program=sematone-360#book-consultation` |
+| 2 — Schedule | `?form=open&step=2&program=abdomen#book-consultation` |
+| 3 — Location | `?form=open&step=3&program=abdomen#book-consultation` |
+| Success | `?form=open&step=4&program=abdomen#book-consultation` |
+
+`program` is one of the five `INTEREST_OPTIONS` ids: `glp1`, `abdomen`,
+`hips`, `thighs`, or `not-sure` — matching the five Meta ad audiences 1:1.
 
 Each transition fires a `ViewContent` event with a matching `virtual_page`
-(e.g. `/book-consultation/step-2-program-fit`) and a `step` number, so you can
+(e.g. `/book-consultation/step-2-schedule`) and a `step` number, so you can
 build a proper funnel report instead of just a single "opened the form" event.
 `history.pushState` runs once (on open) and `history.replaceState` on every
 step after that, so the visitor's back-button history stays clean — one entry

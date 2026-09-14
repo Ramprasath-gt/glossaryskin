@@ -3,8 +3,6 @@
 // Vanilla JS only — no build step, no framework. Reads data from config.js.
 // =============================================================================
 
-document.getElementById("year").textContent = new Date().getFullYear();
-
 /* -----------------------------------------------------------------------
    TRACKING
    Meta Pixel / GA4 / GTM are injected only if an ID is present in config.js.
@@ -14,6 +12,9 @@ const TRACK_EVENTS = {
   VIEW_CONTENT: "ViewContent",
   CTA_CLICK: "CTA_Click",
   PROGRAM_CLICK: "Program_Click",
+  INTEREST_SELECTED: "Interest_Selected",
+  SERVICE_NAV_CLICK: "Service_Nav_Click",
+  WHATSAPP_CLICK: "WhatsApp_Click",
   FORM_START: "Form_Start",
   FORM_STEP_COMPLETED: "Form_Step_Completed",
   LOCATION_ADDED: "Location_Added",
@@ -100,16 +101,79 @@ mobileMenu.querySelectorAll("a").forEach((a) =>
 );
 
 /* -----------------------------------------------------------------------
+   SERVICE QUICK-NAV (hero) + WHATSAPP CLICK TRACKING
+------------------------------------------------------------------------ */
+document.querySelectorAll("[data-track-nav]").forEach((el) => {
+  el.addEventListener("click", () => {
+    track(TRACK_EVENTS.SERVICE_NAV_CLICK, { service: el.dataset.trackNav });
+  });
+});
+
+// Subtle scrollspy: highlight the quick-nav chip for whichever service
+// section currently sits in the vertical centre of the viewport. Purely a
+// "you are here" cue — extremely subtle by design, not an attention-getter.
+(function serviceNavActiveState() {
+  // Grouped as arrays, not single elements — the intent chips now exist
+  // twice (a standalone mobile card, and a desktop overlay on the hero
+  // photo), and both copies for a given service need to light up together.
+  const chipsById = {};
+  document.querySelectorAll("[data-track-nav]").forEach((chip) => {
+    (chipsById[chip.dataset.trackNav] ||= []).push(chip);
+  });
+  const targets = Object.keys(chipsById)
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+  if (targets.length === 0) return;
+
+  const navSpyObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const chips = chipsById[entry.target.id];
+        if (!chips) return;
+        chips.forEach((chip) => chip.classList.toggle("is-active", entry.isIntersecting));
+      });
+    },
+    { rootMargin: "-40% 0px -50% 0px" }
+  );
+  targets.forEach((el) => navSpyObserver.observe(el));
+})();
+document.querySelectorAll("[data-whatsapp-click]").forEach((el) => {
+  el.addEventListener("click", () => {
+    track(TRACK_EVENTS.WHATSAPP_CLICK, { source: el.dataset.source || "unknown" });
+  });
+});
+
+/* -----------------------------------------------------------------------
+   BUTTON RIPPLE — Material-style click feedback on every .btn. Purely
+   visual (no functional change); `currentColor` makes it adapt automatically
+   to each button variant's own text colour instead of needing per-variant
+   overrides.
+------------------------------------------------------------------------ */
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".btn");
+  if (!btn || btn.disabled) return;
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const ripple = document.createElement("span");
+  ripple.className = "btn-ripple";
+  ripple.style.width = ripple.style.height = size + "px";
+  ripple.style.left = e.clientX - rect.left - size / 2 + "px";
+  ripple.style.top = e.clientY - rect.top - size / 2 + "px";
+  btn.appendChild(ripple);
+  ripple.addEventListener("animationend", () => ripple.remove());
+});
+
+/* -----------------------------------------------------------------------
    REVEAL ON SCROLL — staggered: siblings inside the same parent cascade in
    with an incremental delay instead of popping in together.
 ------------------------------------------------------------------------ */
 function applyStagger(container) {
   const items = container.querySelectorAll(":scope > .reveal");
   items.forEach((el, i) => {
-    el.style.transitionDelay = `${Math.min(i * 70, 420)}ms`;
+    el.style.transitionDelay = `${Math.min(i * 40, 200)}ms`;
   });
 }
-document.querySelectorAll(".problem__grid, .approach__grid, .why__grid").forEach(applyStagger);
+document.querySelectorAll(".problem__grid, .approach__grid, .why__grid, .glp1__journey, .contouring__grid, .tech__index, .paths__grid").forEach(applyStagger);
 
 const revealObserver = new IntersectionObserver(
   (entries) => {
@@ -125,238 +189,175 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 /* -----------------------------------------------------------------------
-   RENDER: PROGRAMS
------------------------------------------------------------------------- */
-const programsGrid = document.getElementById("programsGrid");
-programsGrid.innerHTML = PROGRAMS.map(
-  (p) => `
-  <div class="program-card reveal">
-    <div class="program-card__visual">
-      <img src="${MEDIA.programImages[p.id] || ""}" alt="${p.name}" loading="lazy" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.remove()" />
-      <span>${p.name}</span>
-    </div>
-    <div class="program-card__body">
-      <h3>${p.name}</h3>
-      <p class="program-card__positioning">${p.positioning}</p>
-      <ul class="program-card__list">
-        ${p.inclusions
-          .slice(0, 4)
-          .map((i) => `<li><span class="dot"></span>${i}</li>`)
-          .join("")}
-        ${p.inclusions.length > 4 ? `<li class="more">+${p.inclusions.length - 4} more included</li>` : ""}
-      </ul>
-      <p class="program-card__note">Pricing shared during your consultation — tailored to your plan.</p>
-      <button class="btn btn--primary btn--md full-width" data-open-booking data-program="${p.id}" data-source="program_card">Check My Eligibility</button>
-    </div>
-  </div>`
-).join("");
-applyStagger(programsGrid);
-programsGrid.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
-
-/* -----------------------------------------------------------------------
    RENDER: TRUST BADGES ("Why Clients Choose Glossary" photo grid)
 ------------------------------------------------------------------------ */
+// One dominant image (the first entry) plus smaller supporting tiles,
+// instead of six equal-weight photos — reads as "here's the evidence,"
+// not a uniform marketing-claims grid.
 const trustBadgesGrid = document.getElementById("trustBadgesGrid");
-trustBadgesGrid.innerHTML = TRUST_BADGES.map(
-  (b) => `
-  <div class="trust-badge-card reveal">
-    <div class="trust-badge-card__visual">
-      <img src="${b.image}" alt="${b.label}" loading="lazy" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.remove()" />
+const [featuredBadge, ...supportingBadges] = TRUST_BADGES;
+trustBadgesGrid.innerHTML = `
+  <div class="trust-feature reveal">
+    <div class="trust-feature__visual">
+      <img src="${featuredBadge.image}" alt="${FEATURED_DOCTOR.name}, ${FEATURED_DOCTOR.credential}" loading="lazy" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.remove()" />
+      <div class="trust-feature__caption">
+        <p class="trust-feature__name">${FEATURED_DOCTOR.name}</p>
+        <p class="trust-feature__credential">${FEATURED_DOCTOR.credential}</p>
+        <span class="trust-feature__experience">${FEATURED_DOCTOR.experience}</span>
+      </div>
     </div>
-    <p>${b.label}</p>
-  </div>`
-).join("");
-applyStagger(trustBadgesGrid);
+    <p>${featuredBadge.label}</p>
+  </div>
+  <div class="trust-badges__grid">
+    ${supportingBadges
+      .map(
+        (b) => `
+    <div class="trust-badge-card reveal">
+      <div class="trust-badge-card__visual">
+        <img src="${b.image}" alt="${b.label}" loading="lazy" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.remove()" />
+      </div>
+      <p>${b.label}</p>
+    </div>`
+      )
+      .join("")}
+  </div>
+`;
+applyStagger(trustBadgesGrid.querySelector(".trust-badges__grid"));
 trustBadgesGrid.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 /* -----------------------------------------------------------------------
    RENDER: TESTIMONIALS
 ------------------------------------------------------------------------ */
-const testimonialsRow = document.getElementById("testimonialsRow");
-testimonialsRow.innerHTML = TESTIMONIALS.map(
-  (t) => `
-  <div class="testimonial-card reveal">
+// Real customer photos aren't available for these named reviews, and using
+// unrelated stock photos under a real person's name would misrepresent who
+// they are — an initials avatar (the same convention Google Reviews itself
+// falls back to) is the honest option here.
+function getInitials(name) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+// One featured review (the first entry) stops the scroll; the rest support
+// it in a smaller grid — six identical cards made genuine testimonials read
+// as filler, which is exactly what this avoids.
+function testimonialCard(t, extraClass) {
+  return `
+  <div class="testimonial-card${extraClass ? " " + extraClass : ""} reveal">
     <span class="stars">★★★★★</span>
     <p class="testimonial-quote">&ldquo;${t.quote}&rdquo;</p>
     <div class="testimonial-meta">
-      <p class="name">${t.name}</p>
-      <p class="service">${t.service}</p>
+      <span class="testimonial-avatar" aria-hidden="true">${getInitials(t.name)}</span>
+      <div>
+        <p class="name">${t.name}</p>
+        <span class="service-pill">${t.service}</span>
+      </div>
     </div>
-  </div>`
-).join("");
-applyStagger(testimonialsRow);
+  </div>`;
+}
+
+const testimonialsRow = document.getElementById("testimonialsRow");
+const [featuredTestimonial, ...supportingTestimonials] = TESTIMONIALS;
+testimonialsRow.innerHTML =
+  testimonialCard(featuredTestimonial, "testimonial-card--featured") +
+  `<div class="testimonials__grid">${supportingTestimonials.map((t) => testimonialCard(t)).join("")}</div>`;
+applyStagger(testimonialsRow.querySelector(".testimonials__grid"));
 testimonialsRow.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
-// Gentle auto-advance on wide screens where the row can actually scroll —
-// pauses on hover/touch so nobody fights the carousel to read a review, and
-// the interval is fully torn down (not just skipped) while the section is
-// off-screen so it isn't quietly ticking for the entire time someone is
-// reading the hero or FAQ instead.
-(function autoAdvanceTestimonials() {
-  let paused = false;
-  let dir = 1;
-  let intervalId = null;
+/* -----------------------------------------------------------------------
+   SOCIAL PROOF TOAST — a corner notification cycling through real reviews,
+   replacing the pull-quotes that used to be scattered across individual
+   sections. Shows one review at a time, on a 30s cycle; pauses while the
+   tab is hidden so it never runs invisibly, and stays dismissed for the
+   session if closed so it never re-annoys a visitor who already closed it.
+------------------------------------------------------------------------ */
+(function socialProofToast() {
+  const toast = document.getElementById("socialToast");
+  if (!toast || TESTIMONIALS.length === 0) return;
+  const avatarEl = document.getElementById("socialToastAvatar");
+  const nameEl = document.getElementById("socialToastName");
+  const textEl = document.getElementById("socialToastText");
+  const closeBtn = document.getElementById("socialToastClose");
 
-  testimonialsRow.addEventListener("mouseenter", () => (paused = true));
-  testimonialsRow.addEventListener("mouseleave", () => (paused = false));
-  testimonialsRow.addEventListener("touchstart", () => (paused = true), { passive: true });
+  let dismissed = false;
+  try {
+    dismissed = sessionStorage.getItem("glossary_toast_dismissed") === "1";
+  } catch (e) {
+    /* private-browsing / storage blocked — just don't persist the dismissal */
+  }
+  if (dismissed) return;
 
-  function tick() {
-    if (paused) return;
-    const maxScroll = testimonialsRow.scrollWidth - testimonialsRow.clientWidth;
-    if (maxScroll <= 4) return;
-    if (testimonialsRow.scrollLeft >= maxScroll - 4) dir = -1;
-    if (testimonialsRow.scrollLeft <= 4) dir = 1;
-    testimonialsRow.scrollBy({ left: dir * 2, behavior: "auto" });
+  const CYCLE_MS = 30000;
+  const VISIBLE_MS = 7000;
+  let index = 0;
+  let cycleId = null;
+  let hideTimeoutId = null;
+
+  function showNext() {
+    const t = TESTIMONIALS[index % TESTIMONIALS.length];
+    index++;
+    avatarEl.textContent = getInitials(t.name);
+    nameEl.textContent = t.name;
+    textEl.textContent = `Left a 5★ Google review for ${t.service}`;
+    toast.classList.add("is-visible");
+    clearTimeout(hideTimeoutId);
+    hideTimeoutId = setTimeout(() => toast.classList.remove("is-visible"), VISIBLE_MS);
   }
 
-  new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !intervalId) {
-          intervalId = setInterval(tick, 30);
-        } else if (!entry.isIntersecting && intervalId) {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
-      });
-    },
-    { threshold: 0.2 }
-  ).observe(testimonialsRow);
+  function start() {
+    if (cycleId) return;
+    showNext();
+    cycleId = setInterval(showNext, CYCLE_MS);
+  }
+  function stop() {
+    clearInterval(cycleId);
+    cycleId = null;
+    clearTimeout(hideTimeoutId);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stop();
+    else start();
+  });
+
+  closeBtn.addEventListener("click", () => {
+    toast.classList.remove("is-visible");
+    stop();
+    try {
+      sessionStorage.setItem("glossary_toast_dismissed", "1");
+    } catch (e) {}
+  });
+
+  // First appearance is deliberately delayed — not an instant pop-up the
+  // moment the page loads, so it reads as organic activity rather than an
+  // intrusive greeting.
+  setTimeout(start, 8000);
 })();
 
 /* -----------------------------------------------------------------------
-   REELS — story-style auto-advancing carousel (Instagram/TikTok pattern).
-   Each reel plays for UX_CONFIG.storyDurationMs, then auto-advances. Tap the
-   left/right edges to jump manually; tap the expand button for a full,
-   unmuted view. A missing video/poster file falls back to a labelled
-   placeholder instead of a broken/fabricated asset.
+   REELS — static 4-up "phone mockup" grid. Each tile is a poster image
+   inside a CSS phone-bezel frame with a play button; tapping any tile opens
+   the same video full-screen with sound via reelLightbox. A missing video
+   file just disables that tile's click instead of showing a broken player.
 ------------------------------------------------------------------------ */
-const storyProgress = document.getElementById("storyProgress");
-const storyVideo = document.getElementById("storyVideo");
-const storyPlaceholder = document.getElementById("storyPlaceholder");
-const storyTitle = document.getElementById("storyTitle");
-const storyCaption = document.getElementById("storyCaption");
-const storyStage = document.getElementById("storyStage");
+const phoneMockupGrid = document.getElementById("phoneMockupGrid");
 
-storyProgress.innerHTML = REELS.map(() => `<div class="story__seg"><i></i></div>`).join("");
-const storySegments = Array.from(storyProgress.querySelectorAll("i"));
-
-let storyIndex = 0;
-let storyStart = 0;
-let storyElapsedAtPause = 0;
-let storyPaused = true; // starts paused; the IntersectionObserver below starts it once it's actually on screen
-let storyInView = false;
-let storyRaf = null;
-
-function loadReelMedia(reel) {
-  storyVideo.pause();
-  storyVideo.removeAttribute("src");
-  storyVideo.style.display = "none";
-  storyPlaceholder.style.display = "none";
-  storyPlaceholder.textContent = "[ Add real reel video ]";
-
-  if (reel.videoUrl) {
-    storyVideo.src = reel.videoUrl;
-    storyVideo.poster = reel.posterUrl || "";
-    storyVideo.style.display = "block";
-    storyVideo.currentTime = 0;
-    storyVideo.onerror = () => {
-      storyVideo.style.display = "none";
-      storyPlaceholder.style.display = "flex";
-    };
-    // Actual playback only starts once the carousel is on screen — see
-    // resumeStory(), triggered by the IntersectionObserver below. Loading a
-    // video's metadata here (to know if it 404s) is fine; autoplaying it
-    // before the visitor has scrolled to it is not.
-    if (storyInView && !storyPaused) {
-      storyVideo.play().catch(() => {
-        storyVideo.style.display = "none";
-        storyPlaceholder.style.display = "flex";
-      });
-    }
-  } else {
-    storyPlaceholder.style.display = "flex";
-  }
-}
-
-function renderStory(index, resetTimer = true) {
-  storyIndex = (index + REELS.length) % REELS.length;
-  const reel = REELS[storyIndex];
-  storyTitle.textContent = reel.title;
-  storyCaption.textContent = reel.caption;
-  loadReelMedia(reel);
-
-  storySegments.forEach((seg, i) => {
-    seg.style.transition = "none";
-    seg.style.width = i < storyIndex ? "100%" : "0%";
-  });
-  // Force reflow so the next transition isn't merged with the reset above.
-  void storyProgress.offsetWidth;
-  storySegments.forEach((seg) => (seg.style.transition = ""));
-
-  if (resetTimer) {
-    storyStart = performance.now();
-    storyElapsedAtPause = 0;
-  }
-}
-
-// The rAF loop only runs while storyPaused is false, and is fully cancelled
-// (not just skipped) whenever paused — an unconditional infinite rAF loop
-// running from page load regardless of scroll position wastes battery/CPU
-// for no benefit while the carousel is off-screen.
-function stepStory() {
-  const elapsed = storyElapsedAtPause + (performance.now() - storyStart);
-  const pct = Math.min(1, elapsed / UX_CONFIG.storyDurationMs);
-  storySegments[storyIndex].style.width = pct * 100 + "%";
-  if (pct >= 1) {
-    renderStory(storyIndex + 1);
-  }
-  storyRaf = requestAnimationFrame(stepStory);
-}
-
-function pauseStory() {
-  if (storyPaused) return;
-  storyPaused = true;
-  storyElapsedAtPause += performance.now() - storyStart;
-  if (!storyVideo.paused) storyVideo.pause();
-  if (storyRaf) {
-    cancelAnimationFrame(storyRaf);
-    storyRaf = null;
-  }
-}
-
-function resumeStory() {
-  if (!storyPaused || !storyInView) return;
-  storyPaused = false;
-  storyStart = performance.now();
-  if (storyVideo.style.display === "block") storyVideo.play().catch(() => {});
-  if (!storyRaf) storyRaf = requestAnimationFrame(stepStory);
-}
-
-const storyVisibilityObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      storyInView = entry.isIntersecting;
-      if (storyInView) resumeStory();
-      else pauseStory();
-    });
-  },
-  { threshold: 0.3 }
-);
-storyVisibilityObserver.observe(storyStage);
-
-document.getElementById("storyPrev").addEventListener("click", () => renderStory(storyIndex - 1));
-document.getElementById("storyNext").addEventListener("click", () => renderStory(storyIndex + 1));
-storyStage.addEventListener("mousedown", pauseStory);
-storyStage.addEventListener("touchstart", pauseStory, { passive: true });
-["mouseup", "mouseleave", "touchend", "touchcancel"].forEach((evt) =>
-  storyStage.addEventListener(evt, resumeStory)
-);
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) pauseStory();
-  else resumeStory();
-});
+phoneMockupGrid.innerHTML = REELS.map(
+  (reel, i) => `
+    <button type="button" class="phone-mockup" data-reel-index="${i}" aria-label="Play: ${reel.title}">
+      <span class="phone-mockup__frame">
+        <span class="phone-mockup__notch"></span>
+        <img class="phone-mockup__poster" src="${reel.posterUrl}" alt="${reel.title}" loading="lazy"
+          onload="this.classList.add('is-loaded')" onerror="this.remove()">
+        <span class="phone-mockup__play">▶</span>
+      </span>
+      <span class="phone-mockup__caption">${reel.title}</span>
+    </button>`
+).join("");
 
 const reelLightbox = document.createElement("div");
 reelLightbox.className = "reel-lightbox";
@@ -364,25 +365,23 @@ reelLightbox.innerHTML = `<div class="reel-lightbox__inner"><video controls play
 document.body.appendChild(reelLightbox);
 const reelLightboxVideo = reelLightbox.querySelector("video");
 
-document.getElementById("storyExpand").addEventListener("click", () => {
-  const reel = REELS[storyIndex];
-  if (!reel.videoUrl) return;
-  pauseStory();
-  reelLightboxVideo.src = reel.videoUrl;
-  reelLightboxVideo.muted = false;
-  reelLightbox.classList.add("is-open");
-  reelLightboxVideo.play().catch(() => {});
+phoneMockupGrid.querySelectorAll(".phone-mockup").forEach((tile) => {
+  tile.addEventListener("click", () => {
+    const reel = REELS[Number(tile.dataset.reelIndex)];
+    if (!reel.videoUrl) return;
+    reelLightboxVideo.src = reel.videoUrl;
+    reelLightboxVideo.muted = false;
+    reelLightbox.classList.add("is-open");
+    reelLightboxVideo.play().catch(() => {});
+  });
 });
 reelLightbox.addEventListener("click", (e) => {
   if (e.target === reelLightbox || e.target.closest(".reel-lightbox__close")) {
     reelLightbox.classList.remove("is-open");
     reelLightboxVideo.pause();
     reelLightboxVideo.removeAttribute("src");
-    resumeStory();
   }
 });
-
-renderStory(0, false); // set up the first story's media/caption; the visibility observer starts the timer once it's on screen
 
 /* -----------------------------------------------------------------------
    VALIDATION HELPERS
@@ -390,14 +389,66 @@ renderStory(0, false); // set up the first story's media/caption; the visibility
 const isValidMobile = (v) => /^[6-9]\d{9}$/.test((v || "").replace(/\D/g, ""));
 const isValidPincode = (v) => /^\d{6}$/.test((v || "").trim());
 const isNonEmpty = (v) => (v || "").trim().length > 0;
-const isValidAge = (v) => Number.isInteger(Number(v)) && Number(v) >= 18 && Number(v) <= 90;
-const isValidWeight = (v) => Number(v) > 25 && Number(v) < 350;
-const isValidHeight = (v) => Number(v) > 100 && Number(v) < 230;
+const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || "").trim());
+
+// Maps each error span to the field it belongs to, so setError can put a
+// visible border on the field itself instead of leaving that to a small
+// text line alone.
+const FIELD_FOR_ERROR = {
+  err_fullName: "f_fullName",
+  err_mobile: "f_mobile",
+  err_email: "f_email",
+  err_city: "f_city",
+  err_address: "f_address",
+  err_house: "f_house",
+  err_area: "f_area",
+  err_pincode: "f_pincode",
+  err_phone: "f_phone",
+};
 
 function setError(id, message) {
   const el = document.getElementById(id);
   if (el) el.textContent = message || "";
+  const fieldId = FIELD_FOR_ERROR[id];
+  if (fieldId) {
+    const field = document.getElementById(fieldId);
+    if (field) field.classList.toggle("has-error", !!message);
+  }
 }
+
+// A stale error sitting under a field the visitor already fixed reads as
+// "this form is broken" — clears the moment that one field becomes valid,
+// without nagging with a NEW error while they're still mid-typing.
+function clearErrorWhenValid(fieldId, errorId, validator) {
+  const field = document.getElementById(fieldId);
+  if (!field) return;
+  field.addEventListener("input", () => {
+    if (validator(field.value)) setError(errorId, "");
+  });
+}
+// On a short step this never matters, but step 4 (location) has enough
+// fields that a visitor who scrolled down before hitting Continue could
+// submit, see nothing happen, and never notice an error sitting above the
+// current scroll position. Brings the first invalid field into view and
+// focuses it so a failed validation is never silently invisible.
+function focusFirstInvalid() {
+  const field = document.querySelector(".form-step:not([hidden]) .has-error");
+  if (!field) return;
+  field.scrollIntoView({ block: "center", behavior: "smooth" });
+  field.focus({ preventScroll: true });
+}
+
+Object.entries(FIELD_FOR_ERROR).forEach(([errorId, fieldId]) => {
+  const validator =
+    fieldId === "f_mobile" || fieldId === "f_phone"
+      ? isValidMobile
+      : fieldId === "f_pincode"
+      ? isValidPincode
+      : fieldId === "f_email"
+      ? isValidEmail
+      : isNonEmpty;
+  clearErrorWhenValid(fieldId, errorId, validator);
+});
 
 /* -----------------------------------------------------------------------
    BOOKING MODAL STATE
@@ -408,7 +459,7 @@ const stepLabel = document.getElementById("stepLabel");
 const progressBars = [1, 2, 3, 4].map((n) => document.getElementById("progressBar" + n));
 const stickyCta = document.getElementById("stickyCta");
 
-const STEP_LABELS = ["Your Goal", "Program Fit", "Schedule", "Location"];
+const STEP_LABELS = ["About You", "Your Goal", "Schedule", "Location"];
 const TOTAL_STEPS = 4;
 
 const bookingState = {
@@ -416,6 +467,20 @@ const bookingState = {
   hasStarted: false,
   data: { consent: true },
 };
+
+// Optional contextual preselection: if the Meta ad's destination URL appends
+// ?service=glp1 (or abdomen/hips/thighs/not-sure), pre-select that interest
+// before the visitor even opens the form. Safe no-op if the parameter is
+// absent or unrecognised — nothing on the current ad setup is assumed to send
+// this yet; it only activates once/if the ad URLs are updated to include it.
+(function presetInterestFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const preset = params.get("service") || params.get("interest");
+  if (preset && INTEREST_OPTIONS.some((o) => o.id === preset)) {
+    bookingState.data.preferredProgram = preset;
+    track(TRACK_EVENTS.PROGRAM_CLICK, { program: preset, source: "url_param" });
+  }
+})();
 
 // The URL changes on EVERY page of the form (e.g.
 // "?form=open&step=2&program=sematone-360#book-consultation") so each step is
@@ -432,7 +497,7 @@ const BASE_URL = (function () {
   return window.location.pathname + (qs ? "?" + qs : "");
 })();
 
-const STEP_PATH_NAMES = ["step-1-your-goal", "step-2-program-fit", "step-3-schedule", "step-4-location", "success"];
+const STEP_PATH_NAMES = ["step-1-about-you", "step-2-your-goal", "step-3-schedule", "step-4-location", "success"];
 
 function pushModalUrl(programId) {
   const params = new URLSearchParams(window.location.search);
@@ -471,6 +536,45 @@ window.addEventListener("popstate", () => {
   }
 });
 
+/* -----------------------------------------------------------------------
+   MODAL FOCUS TRAP — keyboard focus must stay inside the dialog while it's
+   open (WAI-ARIA dialog pattern): focus moves in on open, Tab/Shift+Tab
+   cycle only through the modal's own visible controls, and focus returns to
+   whatever triggered the modal once it closes. Queried fresh on every Tab
+   press rather than cached, since the visible field set changes between
+   the form's steps.
+------------------------------------------------------------------------ */
+const modalEl = document.querySelector(".modal");
+let modalTriggerEl = null;
+
+function getFocusableElements(container) {
+  return Array.from(
+    container.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((el) => el.offsetParent !== null);
+}
+
+function trapModalFocus(e) {
+  if (e.key !== "Tab" || !overlay.classList.contains("is-open")) return;
+  const focusable = getFocusableElements(modalEl);
+  if (focusable.length === 0) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const activeInModal = modalEl.contains(document.activeElement);
+  if (e.shiftKey) {
+    if (!activeInModal || document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    }
+  } else {
+    if (!activeInModal || document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+}
+
 function openBooking(programId, source) {
   if (programId) {
     bookingState.data.preferredProgram = programId;
@@ -482,11 +586,13 @@ function openBooking(programId, source) {
     bookingState.hasStarted = true;
   }
   if (!source || !source.startsWith("auto_popup")) hasManuallyOpened = true;
+  modalTriggerEl = document.activeElement;
   overlay.classList.add("is-open");
   stickyCta.classList.add("is-hidden");
   document.body.classList.add("modal-open");
   pushModalUrl(programId);
   showStep(bookingState.step);
+  modalEl.focus();
 }
 
 function closeBooking(opts) {
@@ -495,21 +601,8 @@ function closeBooking(opts) {
   document.body.classList.remove("modal-open");
   if (!(opts && opts.fromPopState)) popModalUrl();
   scheduleSecondPopup();
-}
-
-function resetBooking() {
-  bookingState.step = 1;
-  bookingState.hasStarted = false;
-  bookingState.data = { consent: true };
-  document.querySelectorAll(".form-step input, .form-step textarea").forEach((el) => {
-    if (el.type === "checkbox") el.checked = true;
-    else el.value = "";
-  });
-  document.querySelectorAll(".pill-grid .pill, .pill-stack .pill").forEach((p) => p.classList.remove("is-selected"));
-  locationNote.textContent = "";
-  mapContainer.innerHTML = "";
-  gmap = null;
-  gmarker = null;
+  if (modalTriggerEl && document.body.contains(modalTriggerEl)) modalTriggerEl.focus();
+  modalTriggerEl = null;
 }
 
 document.querySelectorAll("[data-open-booking]").forEach((btn) => {
@@ -521,6 +614,7 @@ overlay.addEventListener("click", (e) => {
 });
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && overlay.classList.contains("is-open")) closeBooking();
+  else trapModalFocus(e);
 });
 
 function showStep(n) {
@@ -535,12 +629,25 @@ function showStep(n) {
     stepLabel.textContent = `Step ${n} of ${TOTAL_STEPS} · ${STEP_LABELS[n - 1]}`;
   }
   document.getElementById("modalBody").scrollTop = 0;
-  if (n === 2) renderStep2();
-  if (n === 3) renderStep3();
-  // Only touch the URL while the modal is actually open — showStep(1) also
-  // runs right after the modal has been closed (resetting it for next time),
-  // and that must never re-push a "?form=open" URL onto a closed page.
-  if (overlay.classList.contains("is-open")) updateModalStepUrl(n);
+  if (n === 2) renderInterestPills();
+  if (n === 3) renderScheduleStep();
+  // Only touch the URL/focus while the modal is actually open — showStep(1)
+  // also runs right after the modal has been closed (resetting it for next
+  // time), and that must never re-push a "?form=open" URL onto a closed
+  // page or steal focus on a hidden dialog.
+  if (overlay.classList.contains("is-open")) {
+    updateModalStepUrl(n);
+    // One less tap per step: lands the visitor straight in the first field
+    // instead of requiring them to tap into it themselves. Only steps 1 and
+    // 4 lead with a text field — 2 and 3 start with a tap-to-select control,
+    // where autofocusing a hidden input wouldn't help.
+    const firstField = document.querySelector(`.form-step[data-step="${n}"] input, .form-step[data-step="${n}"] textarea`);
+    // A timer, not requestAnimationFrame: rAF only fires on the next paint,
+    // which browsers can defer indefinitely while the tab/pane isn't the
+    // active one — this needs to win the race against modalEl.focus() below
+    // reliably, not "whenever the browser next feels like painting."
+    if (firstField) setTimeout(() => firstField.focus({ preventScroll: true }), 50);
+  }
 }
 
 document.querySelectorAll("[data-step-back]").forEach((btn) =>
@@ -548,24 +655,74 @@ document.querySelectorAll("[data-step-back]").forEach((btn) =>
 );
 
 /* --------------------------- STEP 1 --------------------------- */
+function renderInterestPills() {
+  const programPills = document.getElementById("programPills");
+  programPills.innerHTML = INTEREST_OPTIONS.map(
+    (o) => `<button type="button" class="pill pill--block ${bookingState.data.preferredProgram === o.id ? "is-selected" : ""}" data-program="${o.id}">
+        <span class="pill__title">${o.label}</span>
+      </button>`
+  ).join("");
+  programPills.querySelectorAll(".pill").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      bookingState.data.preferredProgram = btn.dataset.program;
+      programPills.querySelectorAll(".pill").forEach((p) => p.classList.remove("is-selected"));
+      btn.classList.add("is-selected");
+      setError("err_program", "");
+      updatePriceReveal(btn.dataset.program);
+      track(TRACK_EVENTS.INTEREST_SELECTED, { interest: btn.dataset.program });
+    })
+  );
+  updatePriceReveal(bookingState.data.preferredProgram);
+}
+
+// Pricing is intentionally absent from the public page — it only appears
+// here, inside the form, and only for the inch-loss treatments (GLP-1
+// pricing is shared during consultation, never shown publicly).
+function updatePriceReveal(interestId) {
+  const reveal = document.getElementById("priceReveal");
+  const option = INTEREST_OPTIONS.find((o) => o.id === interestId);
+  if (!option || !option.priceLabel) {
+    reveal.hidden = true;
+    return;
+  }
+  document.getElementById("priceRevealValue").textContent = option.priceLabel;
+  reveal.hidden = false;
+}
+
 document.querySelector('[data-step-next="1"]').addEventListener("click", () => {
   const fullName = document.getElementById("f_fullName").value;
   const mobile = document.getElementById("f_mobile").value;
-  const age = document.getElementById("f_age").value;
-  const city = document.getElementById("f_city").value;
   const email = document.getElementById("f_email").value;
+  const city = document.getElementById("f_city").value;
 
   let valid = true;
   if (!isNonEmpty(fullName)) { setError("err_fullName", "Please enter your full name."); valid = false; } else setError("err_fullName", "");
-  if (!isValidMobile(mobile)) { setError("err_mobile", "Enter a valid 10-digit mobile number."); valid = false; } else setError("err_mobile", "");
-  if (!isValidAge(age)) { setError("err_age", "Age must be between 18 and 90."); valid = false; } else setError("err_age", "");
+  if (!isValidMobile(mobile)) { setError("err_mobile", "Enter a valid 10-digit phone number."); valid = false; } else setError("err_mobile", "");
+  if (!isValidEmail(email)) { setError("err_email", "Enter a valid email address."); valid = false; } else setError("err_email", "");
   if (!isNonEmpty(city)) { setError("err_city", "Please enter your city."); valid = false; } else setError("err_city", "");
-  if (!valid) return;
+  if (!valid) { focusFirstInvalid(); return; }
 
-  Object.assign(bookingState.data, { fullName, mobile, age, city, email });
+  Object.assign(bookingState.data, { fullName, mobile, email, city });
   track(TRACK_EVENTS.FORM_STEP_COMPLETED, { step: 1 });
   capturePartialLead();
-  showStep(2);
+
+  // A CTA that already told us the service (e.g. "Explore Abdomen") shouldn't
+  // make the visitor re-confirm it — skip straight to scheduling.
+  if (bookingState.data.preferredProgram) {
+    showStep(3);
+  } else {
+    showStep(2);
+  }
+});
+
+document.querySelector('[data-step-next="2"]').addEventListener("click", () => {
+  if (!isNonEmpty(bookingState.data.preferredProgram)) {
+    setError("err_program", "Please select what you're interested in.");
+    return;
+  }
+  setError("err_program", "");
+  track(TRACK_EVENTS.FORM_STEP_COMPLETED, { step: 2 });
+  showStep(3);
 });
 
 /**
@@ -583,20 +740,15 @@ document.querySelector('[data-step-next="1"]').addEventListener("click", () => {
  */
 function buildSheetPayload(stage) {
   const d = bookingState.data;
-  const program = PROGRAMS.find((p) => p.id === d.preferredProgram);
-  const programName =
-    d.preferredProgram === "not-sure" ? "Not sure — help me choose" : program ? program.name : d.preferredProgram || "";
+  const option = INTEREST_OPTIONS.find((o) => o.id === d.preferredProgram);
+  const programName = option ? option.label : d.preferredProgram || "";
 
   return {
     stage,
     fullName: d.fullName || "",
     mobile: d.mobile || "",
     email: d.email || "",
-    age: d.age || "",
     city: d.city || "",
-    currentWeight: d.currentWeight || "",
-    height: d.height || "",
-    weightLossGoal: d.weightLossGoal || "",
     programName,
     appointmentDate: d.appointmentDate || "",
     appointmentTime: d.appointmentTime || "",
@@ -612,6 +764,13 @@ function buildSheetPayload(stage) {
 
 function postToGoogleSheet(stage) {
   if (!SITE_CONFIG.googleSheetWebhookUrl) return Promise.resolve({ ok: true });
+  // Google Apps Script Web Apps routinely take several seconds to respond
+  // (measured ~4.7s in testing, and it can run longer on a cold start) — with
+  // no timeout, a slow or hung response left the "Confirm My Consultation"
+  // button stuck on "Submitting…" indefinitely, reading as broken. Aborting
+  // after 15s guarantees the UI always resolves one way or the other.
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
   // No explicit Content-Type header: fetch defaults a string body to
   // text/plain, which keeps this a CORS "simple request" — Apps Script Web
   // Apps don't implement the OPTIONS preflight that application/json would
@@ -619,7 +778,10 @@ function postToGoogleSheet(stage) {
   return fetch(SITE_CONFIG.googleSheetWebhookUrl, {
     method: "POST",
     body: JSON.stringify(buildSheetPayload(stage)),
-  }).then((res) => res.json().catch(() => ({ ok: true })));
+    signal: controller.signal,
+  })
+    .then((res) => res.json().catch(() => ({ ok: true })))
+    .finally(() => clearTimeout(timeoutId));
 }
 
 let partialLeadSent = false;
@@ -640,80 +802,7 @@ function capturePartialLead() {
   });
 }
 
-/* --------------------------- STEP 2 --------------------------- */
-function renderStep2() {
-  const goalPills = document.getElementById("goalPills");
-  goalPills.innerHTML = WEIGHT_LOSS_GOALS.map(
-    (g) => `<button type="button" class="pill ${bookingState.data.weightLossGoal === g ? "is-selected" : ""}" data-goal="${g}">${g}</button>`
-  ).join("");
-  goalPills.querySelectorAll(".pill").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      bookingState.data.weightLossGoal = btn.dataset.goal;
-      goalPills.querySelectorAll(".pill").forEach((p) => p.classList.remove("is-selected"));
-      btn.classList.add("is-selected");
-      setError("err_goal", "");
-    })
-  );
-
-  const programPills = document.getElementById("programPills");
-  const options = PROGRAMS.map((p) => ({ id: p.id, label: p.name, sub: p.positioning })).concat({
-    id: "not-sure",
-    label: "Not sure — help me choose",
-    sub: "",
-  });
-  programPills.innerHTML = options
-    .map(
-      (o) => `<button type="button" class="pill pill--block ${bookingState.data.preferredProgram === o.id ? "is-selected" : ""}" data-program="${o.id}">
-        <span class="pill__title">${o.label}</span>
-        ${o.sub ? `<span class="pill__sub">${o.sub}</span>` : ""}
-      </button>`
-    )
-    .join("");
-  programPills.querySelectorAll(".pill").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      bookingState.data.preferredProgram = btn.dataset.program;
-      programPills.querySelectorAll(".pill").forEach((p) => p.classList.remove("is-selected"));
-      btn.classList.add("is-selected");
-      setError("err_program", "");
-      updatePriceReveal(btn.dataset.program);
-    })
-  );
-
-  document.getElementById("f_weight").value = bookingState.data.currentWeight || "";
-  document.getElementById("f_height").value = bookingState.data.height || "";
-  updatePriceReveal(bookingState.data.preferredProgram);
-}
-
-// Pricing is intentionally absent from the public page — it only appears
-// here, inside the form, once a program is actually selected on Step 2.
-function updatePriceReveal(programId) {
-  const reveal = document.getElementById("priceReveal");
-  const program = PROGRAMS.find((p) => p.id === programId);
-  if (!program) {
-    reveal.hidden = true;
-    return;
-  }
-  document.getElementById("priceRevealValue").textContent = program.priceLabel;
-  reveal.hidden = false;
-}
-
-document.querySelector('[data-step-next="2"]').addEventListener("click", () => {
-  const currentWeight = document.getElementById("f_weight").value;
-  const height = document.getElementById("f_height").value;
-
-  let valid = true;
-  if (!isValidWeight(currentWeight)) { setError("err_weight", "Enter a valid weight in kg."); valid = false; } else setError("err_weight", "");
-  if (!isValidHeight(height)) { setError("err_height", "Enter a valid height in cm."); valid = false; } else setError("err_height", "");
-  if (!isNonEmpty(bookingState.data.weightLossGoal)) { setError("err_goal", "Please select a goal."); valid = false; }
-  if (!isNonEmpty(bookingState.data.preferredProgram)) { setError("err_program", "Please select a program."); valid = false; }
-  if (!valid) return;
-
-  Object.assign(bookingState.data, { currentWeight, height });
-  track(TRACK_EVENTS.FORM_STEP_COMPLETED, { step: 2 });
-  showStep(3);
-});
-
-/* --------------------------- STEP 3 --------------------------- */
+/* --------------------------- STEP 2: SCHEDULE --------------------------- */
 function toISO(d) {
   // Build the ISO date from LOCAL date parts. d.toISOString() converts
   // through UTC first, which silently shifts the date backward by a day for
@@ -726,79 +815,78 @@ function toISO(d) {
   return `${y}-${m}-${day}`;
 }
 
-function renderStep3() {
-  const dateStrip = document.getElementById("dateStrip");
+// Bounds the whole calendar to "today" through "29 days from today" — the
+// same 30-day booking horizon the old date-strip used, just presented as a
+// real calendar instead of a scroll list. Recomputed each time the step
+// renders rather than cached, since "today" can roll over between visits.
+function bookingWindow() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const days = Array.from({ length: 30 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
+  const max = new Date(today);
+  max.setDate(max.getDate() + 29);
+  return { today, max };
+}
 
-  dateStrip.innerHTML = days
-    .map((d) => {
-      const iso = toISO(d);
-      const selected = bookingState.data.appointmentDate === iso;
-      return `<button type="button" class="date-chip ${selected ? "is-selected" : ""}" data-date="${iso}">
-        <span class="month">${d.toLocaleDateString("en-IN", { month: "short" })}</span>
-        <span class="day">${d.getDate()}</span>
-        <span class="weekday">${d.toLocaleDateString("en-IN", { weekday: "short" })}</span>
-      </button>`;
-    })
-    .join("");
+// Tracks which month the calendar is currently showing — separate from
+// which date is selected, since a visitor can browse to a different month
+// without having picked a day in it yet. Reset whenever the step is entered
+// fresh with no date already chosen.
+let calendarViewDate = null;
 
-  dateStrip.querySelectorAll(".date-chip").forEach((btn) =>
+function renderScheduleStep() {
+  const { today, max } = bookingWindow();
+  if (!calendarViewDate) {
+    calendarViewDate = bookingState.data.appointmentDate ? new Date(bookingState.data.appointmentDate + "T00:00:00") : new Date(today);
+  }
+  calendarViewDate.setDate(1);
+
+  document.getElementById("calMonthLabel").textContent = calendarViewDate.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+
+  const prevBtn = document.getElementById("calPrevBtn");
+  const nextBtn = document.getElementById("calNextBtn");
+  const isFirstMonth = calendarViewDate.getFullYear() === today.getFullYear() && calendarViewDate.getMonth() === today.getMonth();
+  const isLastMonth = calendarViewDate.getFullYear() === max.getFullYear() && calendarViewDate.getMonth() === max.getMonth();
+  prevBtn.disabled = isFirstMonth;
+  nextBtn.disabled = isLastMonth;
+
+  const grid = document.getElementById("calGrid");
+  const firstWeekday = calendarViewDate.getDay();
+  const daysInMonth = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + 1, 0).getDate();
+
+  let cells = "";
+  for (let i = 0; i < firstWeekday; i++) cells += `<span class="calendar__cell calendar__cell--empty"></span>`;
+  for (let day = 1; day <= daysInMonth; day++) {
+    const d = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth(), day);
+    const iso = toISO(d);
+    const inWindow = d >= today && d <= max;
+    const selected = bookingState.data.appointmentDate === iso;
+    cells += `<button type="button" class="calendar__cell ${selected ? "is-selected" : ""}" data-date="${iso}" ${inWindow ? "" : "disabled"}>${day}</button>`;
+  }
+  grid.innerHTML = cells;
+
+  grid.querySelectorAll(".calendar__cell[data-date]").forEach((btn) =>
     btn.addEventListener("click", () => {
       bookingState.data.appointmentDate = btn.dataset.date;
-      bookingState.data.appointmentTime = null;
-      dateStrip.querySelectorAll(".date-chip").forEach((c) => c.classList.remove("is-selected"));
-      btn.classList.add("is-selected");
       setError("err_schedule", "");
       track(TRACK_EVENTS.DATE_SELECTED, { date: btn.dataset.date });
-      renderSlots();
+      renderScheduleStep();
     })
   );
 
-  renderSlots();
+  renderTimePreference();
 }
 
-function renderSlots() {
-  const slotsField = document.getElementById("slotsField");
-  const container = document.getElementById("slotsContainer");
-  if (!bookingState.data.appointmentDate) {
-    slotsField.hidden = true;
-    return;
-  }
-  slotsField.hidden = false;
-  const slots = getAvailableSlots(bookingState.data.appointmentDate);
-  if (slots.length === 0) {
-    container.innerHTML = `<p class="no-slots">No slots available this day — please choose another date.</p>`;
-    return;
-  }
-  const periods = ["Morning", "Afternoon", "Evening"];
-  container.innerHTML = periods
-    .map((period) => {
-      const periodSlots = slots.filter((s) => s.period === period);
-      if (periodSlots.length === 0) return "";
-      return `<div class="slot-group">
-        <span class="slot-group__label">${period}</span>
-        <div class="slot-group__row">
-          ${periodSlots
-            .map(
-              (s) =>
-                `<button type="button" class="slot-pill ${bookingState.data.appointmentTime === s.label ? "is-selected" : ""}" data-time="${s.label}">${s.label}</button>`
-            )
-            .join("")}
-        </div>
-      </div>`;
-    })
-    .join("");
+function renderTimePreference() {
+  const grid = document.getElementById("timePrefGrid");
+  grid.innerHTML = TIME_PREFERENCES.map(
+    (label) =>
+      `<button type="button" class="time-pref__option ${bookingState.data.appointmentTime === label ? "is-selected" : ""}" data-time="${label}">${label}</button>`
+  ).join("");
 
-  container.querySelectorAll(".slot-pill").forEach((btn) =>
+  grid.querySelectorAll(".time-pref__option").forEach((btn) =>
     btn.addEventListener("click", () => {
       bookingState.data.appointmentTime = btn.dataset.time;
-      container.querySelectorAll(".slot-pill").forEach((p) => p.classList.remove("is-selected"));
+      grid.querySelectorAll(".time-pref__option").forEach((b) => b.classList.remove("is-selected"));
       btn.classList.add("is-selected");
       setError("err_schedule", "");
       track(TRACK_EVENTS.TIME_SELECTED, { time: btn.dataset.time });
@@ -806,9 +894,18 @@ function renderSlots() {
   );
 }
 
+document.getElementById("calPrevBtn").addEventListener("click", () => {
+  calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+  renderScheduleStep();
+});
+document.getElementById("calNextBtn").addEventListener("click", () => {
+  calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+  renderScheduleStep();
+});
+
 document.querySelector('[data-step-next="3"]').addEventListener("click", () => {
   if (!bookingState.data.appointmentDate || !bookingState.data.appointmentTime) {
-    setError("err_schedule", "Please choose a date and time slot.");
+    setError("err_schedule", "Please choose a date and preferred time.");
     return;
   }
   setError("err_schedule", "");
@@ -816,7 +913,7 @@ document.querySelector('[data-step-next="3"]').addEventListener("click", () => {
   showStep(4);
 });
 
-/* --------------------------- STEP 4: LOCATION --------------------------- */
+/* --------------------------- STEP 3: LOCATION --------------------------- */
 const useLocationBtn = document.getElementById("useLocationBtn");
 const locationNote = document.getElementById("locationNote");
 const mapContainer = document.getElementById("mapContainer");
@@ -910,16 +1007,25 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   if (!isValidPincode(pincode)) { setError("err_pincode", "Enter a valid 6-digit pincode."); valid = false; } else setError("err_pincode", "");
   if (!isValidMobile(phone)) { setError("err_phone", "Enter a valid 10-digit phone number."); valid = false; } else setError("err_phone", "");
   if (!consent) { setError("err_submit", "Please accept the consent checkbox to continue."); valid = false; }
-  if (!valid) return;
+  if (!valid) { focusFirstInvalid(); return; }
 
   Object.assign(bookingState.data, { address, houseNumber, area, pincode, phone, consent });
   track(TRACK_EVENTS.LOCATION_ADDED, { method: "manual" });
   track(TRACK_EVENTS.FORM_SUBMIT, { program: bookingState.data.preferredProgram });
 
   const submitBtn = document.getElementById("submitBtn");
+  const submitBtnLabel = submitBtn.querySelector(".btn-label");
   submitBtn.disabled = true;
-  submitBtn.textContent = "Submitting…";
+  submitBtn.classList.add("is-loading");
+  submitBtnLabel.textContent = "Submitting…";
   setError("err_submit", "");
+
+  // The Google Sheets call below can take several seconds — without this,
+  // a visitor watching an unchanged "Submitting…" label for that long has no
+  // way to tell a slow response apart from a frozen one.
+  const slowHintTimer = setTimeout(() => {
+    if (submitBtn.disabled) submitBtnLabel.textContent = "Almost there…";
+  }, 4000);
 
   try {
     // Best-effort — only succeeds on a host that runs PHP (e.g. Hostinger).
@@ -933,60 +1039,107 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     const json = await postToGoogleSheet("complete");
     if (!json.ok) throw new Error(json.error || "Something went wrong. Please try again.");
 
-    track(TRACK_EVENTS.LEAD, { program: bookingState.data.preferredProgram });
-    track(TRACK_EVENTS.BOOKING_COMPLETED, { program: bookingState.data.preferredProgram });
     bookingCompleted = true;
-    renderSuccess();
-    showStep(5);
+    redirectToConfirmation();
   } catch (err) {
-    setError("err_submit", err.message || "Something went wrong. Please try again.");
+    // We already have their name + phone from step 1 (capturePartialLead) —
+    // a slow/failed final submit doesn't mean the team has no way to reach
+    // them, so say so instead of leaving this read as a dead end.
+    const timedOut = err.name === "AbortError";
+    setError(
+      "err_submit",
+      timedOut
+        ? "This is taking longer than expected. We already have your details, so our team can still reach out — please try again, or message us on WhatsApp."
+        : err.message || "Something went wrong. Please try again."
+    );
   } finally {
+    clearTimeout(slowHintTimer);
     submitBtn.disabled = false;
-    submitBtn.textContent = "Submit";
+    submitBtn.classList.remove("is-loading");
+    submitBtnLabel.textContent = "Confirm My Consultation";
   }
 });
 
-/* --------------------------- STEP 5: SUCCESS --------------------------- */
-function renderSuccess() {
-  const d = bookingState.data;
-  const program = PROGRAMS.find((p) => p.id === d.preferredProgram);
-  const programName = program ? program.name : "Not sure — team will help you choose";
-  const formattedDate = d.appointmentDate
-    ? new Date(d.appointmentDate + "T00:00:00").toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })
-    : "";
+/* --------------------------- POST-SUCCESS REDIRECT ---------------------------
+   A successful submit navigates the browser to the dedicated confirmation
+   page (see enquiry-confirmed.html + assets/js/confirmation.js) instead of
+   showing an in-modal success screen. This makes that URL a real, trackable
+   conversion destination for Meta/GA4 — the standard Lead/generate_lead
+   events fire there, not here, so this page's job ends at "submission
+   succeeded, hand off."
+------------------------------------------------------------------------ */
+function redirectToConfirmation() {
+  // One-time id: stored in sessionStorage now, carried in the redirect URL,
+  // and re-checked on the confirmation page before it fires any tracking —
+  // see confirmation.js for why this is what prevents a refresh, a shared
+  // link, or someone typing the URL directly from counting as a conversion.
+  const cid =
+    window.crypto && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  try {
+    sessionStorage.setItem("glossary_pending_cid", cid);
+  } catch (e) {}
 
-  document.getElementById("summaryCard").innerHTML = `
-    <div class="summary-row"><span>Program</span><strong>${programName}</strong></div>
-    <div class="summary-row"><span>Date</span><strong>${formattedDate}</strong></div>
-    <div class="summary-row"><span>Time</span><strong>${d.appointmentTime || ""}</strong></div>
-    <div class="summary-row"><span>Address</span><strong>${[d.houseNumber, d.area, d.city].filter(Boolean).join(", ")}</strong></div>
-  `;
-  document.getElementById("phoneNote").textContent = `Please keep your phone available — our team will call you on ${d.phone || d.mobile} to confirm.`;
+  // Reuses window.location.search rather than re-deriving attribution: the
+  // modal's own URL bookkeeping (pushModalUrl/updateModalStepUrl) has kept
+  // any UTM/click-id params intact in the address bar throughout, since it
+  // only ever adds/overwrites its own form/step/program keys and never
+  // touches anything else already present.
+  const params = new URLSearchParams(window.location.search);
+  ["form", "step", "program"].forEach((k) => params.delete(k));
+  params.set("service", bookingState.data.preferredProgram || "");
+  if (bookingState.data.appointmentDate) params.set("date", bookingState.data.appointmentDate);
+  if (bookingState.data.appointmentTime) params.set("time", bookingState.data.appointmentTime);
+  params.set("cid", cid);
+
+  // Deliberately NOT name/phone/email/address/pincode — none of that belongs
+  // in a URL, and the confirmation page has no legitimate need to display it.
+  window.location.href = `enquiry-confirmed?${params.toString()}`;
 }
 
-document.getElementById("doneBtn").addEventListener("click", () => {
-  closeBooking();
-  setTimeout(() => {
-    resetBooking();
-    showStep(1);
-  }, 300);
-});
-
 /* -----------------------------------------------------------------------
-   AUTO-POPUP — first attempt 5s after landing, a single second attempt 15s
-   after the visitor closes that one. Never fires if they already opened the
-   form themselves, and never nags a third time.
+   AUTO-POPUP — fires once the visitor has actually had a chance to confirm
+   relevance (reached the "Two Clear Paths" section), or after a longer
+   fallback delay for visitors who read without scrolling much. Previously
+   this fired on a flat 5s timer regardless of scroll position, which risked
+   interrupting an Abdomen/Hips/Thighs visitor before they'd seen anything
+   confirming their specific service was even on the page. A single second
+   attempt follows 15s after the visitor closes the first one. Never fires if
+   they already opened the form themselves, and never nags a third time.
 ------------------------------------------------------------------------ */
 let hasManuallyOpened = false;
 let secondPopupShown = false;
 let firstAutoPopupHappened = false;
 let bookingCompleted = false;
+let autoPopupFired = false;
 
+function maybeShowFirstPopup(source) {
+  if (autoPopupFired || hasManuallyOpened || overlay.classList.contains("is-open")) return;
+  autoPopupFired = true;
+  firstAutoPopupHappened = true;
+  openBooking(undefined, source);
+}
+
+const autoPopupTrigger = document.getElementById("programs"); // "Two Clear Paths" section
+if (autoPopupTrigger) {
+  const autoPopupObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          maybeShowFirstPopup("auto_popup_scroll_depth");
+          autoPopupObserver.disconnect();
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+  autoPopupObserver.observe(autoPopupTrigger);
+}
+
+// Fallback for visitors who read attentively without scrolling far — fires
+// later than before (UX_CONFIG.autoOpenDelayMs, now 20s by default) rather
+// than the previous flat 5s.
 setTimeout(() => {
-  if (!hasManuallyOpened && !overlay.classList.contains("is-open")) {
-    firstAutoPopupHappened = true;
-    openBooking(undefined, "auto_popup_5s");
-  }
+  maybeShowFirstPopup("auto_popup_timeout");
 }, UX_CONFIG.autoOpenDelayMs);
 
 function scheduleSecondPopup() {

@@ -1,0 +1,206 @@
+/* =============================================================================
+   GLOSSARY SKIN — ENQUIRY CONFIRMATION PAGE
+   Deliberately self-contained: only the brand tokens + rules this one short
+   page needs, not the full landing-page stylesheet (no hero/reels/testimonial
+   machinery to carry along here).
+============================================================================= */
+
+:root {
+  --brand-green: #004E3C;
+  --forest-900: #0f2a1f;
+  --forest-800: #153729;
+  --forest-700: #1f4436;
+  --forest-600: #2c5747;
+  --forest-500: #3f715c;
+  --forest-300: #8bb29d;
+  --forest-200: #b7d0c3;
+  --forest-100: #dde8e2;
+  --ivory-50: #fffdfa;
+  --ivory-100: #faf6ef;
+  --bronze: #a9793f;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Manrope", Helvetica, Arial, sans-serif;
+  --shadow-card: 0 1px 2px rgba(15, 42, 31, 0.06), 0 12px 32px -12px rgba(15, 42, 31, 0.18);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--forest-900);
+  background: var(--ivory-100);
+  overflow-x: hidden;
+}
+a { color: inherit; }
+
+/* Removed: this page loads right after someone submits a form and is
+   anxiously waiting for "did it work?" — any fade-in delay, however brief,
+   works directly against the one thing this page needs to do fast. The
+   .conf-reveal classes stay as no-ops rather than touching every element
+   that references them. */
+
+.conf-container { max-width: 40rem; margin: 0 auto; padding: 0 1.25rem; }
+
+/* ---- Header --------------------------------------------------------------- */
+/* Same solid brand-green band + reversed-white logo as the booking modal
+   (index.html's .modal__brandbar) — this page is reached immediately after
+   that modal, so carrying the same header treatment across the two keeps
+   the whole conversion moment reading as one continuous experience. */
+.conf-header { padding: 1rem 0; background: var(--brand-green); }
+.conf-header__brand { display: flex; align-items: center; justify-content: center; text-decoration: none; cursor: default; }
+.conf-header__logo { height: 1.8rem; width: auto; display: block; filter: brightness(0) invert(1); }
+
+/* ---- Hero ------------------------------------------------------------------ */
+.conf-main { padding-bottom: 3rem; }
+.conf-hero { padding: 1.5rem 0 2rem; text-align: center; }
+.conf-hero__mark { position: relative; display: flex; align-items: center; justify-content: center; width: fit-content; margin: 0 auto 2.25rem; }
+/* A real "seal" instead of a small logo with a tiny badge tucked in the
+   corner — this is the one moment on the page that has to say "yes, it
+   worked" at a glance, so it gets more visual weight than anything else
+   here. Soft static glow behind it (same technique used sitewide), no
+   motion beyond the one small check pop already on this page. */
+.conf-hero__ring {
+  position: relative; width: 5.5rem; height: 5.5rem; border-radius: 999px;
+  background: var(--ivory-50); border: 1px solid var(--forest-100);
+  display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-card);
+}
+.conf-hero__ring::before {
+  content: ""; position: absolute; inset: -1.1rem; z-index: -1; border-radius: 999px;
+  background: radial-gradient(circle, rgba(0, 78, 60, 0.18), transparent 70%);
+  filter: blur(14px); pointer-events: none;
+}
+.conf-hero__emblem { width: 2.4rem; height: auto; display: block; }
+.conf-hero__check {
+  position: absolute; bottom: -0.3rem; right: -0.3rem;
+  width: 2.1rem; height: 2.1rem; border-radius: 999px;
+  background: var(--brand-green); color: var(--ivory-50);
+  display: flex; align-items: center; justify-content: center;
+  border: 3px solid var(--ivory-100);
+}
+.conf-hero__check svg { width: 1.1rem; height: 1.1rem; }
+@media (prefers-reduced-motion: no-preference) {
+  /* The one animation kept on this page: an instant, tiny scale-in for the
+     checkmark badge — no delay, under 0.2s, so it reads as "already there"
+     rather than something the visitor waits on. */
+  .conf-hero__check { opacity: 0; transform: scale(0.4); animation: confCheckIn 0.18s ease-out forwards; }
+  @keyframes confCheckIn { to { opacity: 1; transform: scale(1); } }
+}
+.conf-eyebrow {
+  display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--bronze); margin-bottom: 0.75rem;
+}
+.conf-hero h1 { font-family: var(--font-serif); font-size: 2.1rem; line-height: 1.15; margin: 0 0 0.85rem; color: var(--forest-900); }
+.conf-hero__sub { font-size: 1rem; line-height: 1.6; color: var(--forest-600); margin: 0 auto; max-width: 30rem; }
+
+/* ---- Summary card ----------------------------------------------------------- */
+.conf-summary {
+  background: #fff; border: 1px solid var(--forest-100); border-radius: 1.1rem;
+  padding: 1.5rem; box-shadow: var(--shadow-card); margin-bottom: 2rem;
+}
+.conf-summary__label {
+  display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--forest-500); margin-bottom: 1rem;
+}
+.conf-summary__list { margin: 0; }
+.conf-summary__row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  padding: 0.7rem 0; border-top: 1px solid var(--forest-100);
+}
+.conf-summary__row:first-child { border-top: none; padding-top: 0; }
+.conf-summary__row dt { margin: 0; font-size: 0.85rem; color: var(--forest-500); }
+.conf-summary__row dd { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--forest-900); text-align: right; }
+
+/* ---- Next steps ------------------------------------------------------------- */
+.conf-section-label {
+  display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--forest-500); margin-bottom: 1.25rem;
+}
+.conf-next { margin-bottom: 2.5rem; }
+.conf-next__list { list-style: none; margin: 0; padding: 0; }
+.conf-next__list li { display: flex; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--forest-100); }
+.conf-next__list li:first-child { border-top: none; padding-top: 0; }
+.conf-next__icon {
+  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem; border-radius: 999px; background: var(--forest-100); color: var(--brand-green);
+}
+.conf-next__icon svg { width: 1.15rem; height: 1.15rem; }
+.conf-next__list h3 { margin: 0; font-size: 1rem; color: var(--forest-900); }
+.conf-next__list p { margin: 0.3rem 0 0; font-size: 0.88rem; line-height: 1.55; color: var(--forest-600); }
+
+/* ---- Trust ------------------------------------------------------------------ */
+.conf-trust { text-align: center; padding: 1.75rem 0; border-top: 1px solid var(--forest-100); margin-bottom: 1.75rem; }
+.conf-trust__lead { font-family: var(--font-serif); font-size: 1.15rem; color: var(--forest-800); margin: 0 0 1rem; }
+.conf-trust__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
+.conf-trust__list li {
+  display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.9rem;
+  border-radius: 999px; border: 1px solid var(--forest-100); background: #fff;
+  font-size: 0.78rem; font-weight: 700; color: var(--forest-700);
+}
+.conf-trust__list li::before {
+  content: ""; flex-shrink: 0; width: 0.95rem; height: 0.95rem; border-radius: 999px;
+  background-color: var(--brand-green);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  background-size: 60%; background-position: center; background-repeat: no-repeat;
+}
+
+/* ---- Support / CTA ----------------------------------------------------------- */
+.conf-support {
+  text-align: center; padding: 2rem 1.5rem; border-radius: 1.25rem;
+  background: #fff; border: 1px solid var(--forest-100); box-shadow: var(--shadow-card);
+}
+.conf-support__title { font-family: var(--font-serif); font-size: 1.1rem; margin: 0 0 0.4rem; color: var(--forest-900); }
+.conf-support__text { font-size: 0.88rem; color: var(--forest-600); margin: 0 0 1.25rem; }
+.conf-support__actions { display: flex; flex-direction: column; gap: 0.75rem; }
+.conf-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  background: var(--brand-green); color: var(--ivory-50); text-decoration: none;
+  font-weight: 700; font-size: 0.95rem; padding: 0.9rem 1.75rem; border-radius: 999px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.conf-cta svg { width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
+.conf-cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-card); }
+.conf-cta:focus-visible { outline: 2px solid var(--brand-green); outline-offset: 3px; }
+/* Call button reads as an equally valid second path, not an afterthought
+   text link — matters here because a visitor unsure the form worked
+   should be one tap from a real person either way. */
+.conf-cta--ghost { background: #fff; color: var(--brand-green); border: 1.5px solid var(--brand-green); }
+.conf-cta--ghost:hover { background: var(--ivory-100); }
+
+@media (min-width: 480px) {
+  .conf-support__actions { flex-direction: row; justify-content: center; }
+}
+
+/* ---- Desktop: hero, then the request summary as a wide ticket strip
+   beneath it — stacked, not side by side, so a visitor reads "you're all
+   set" first and the specifics second, rather than splitting attention
+   between them immediately. ------------------------------------------ */
+@media (min-width: 1024px) {
+  .conf-container { max-width: 52rem; }
+  .conf-top { margin-bottom: 3rem; }
+  .conf-hero { text-align: left; padding: 2rem 0 0; }
+  .conf-hero__mark { justify-content: flex-start; margin-left: 0; }
+  .conf-hero h1 { font-size: 2.75rem; }
+  .conf-hero__sub { margin: 0; max-width: 34rem; }
+
+  /* The card itself becomes a horizontal "ticket stub" — three columns
+     divided by hairlines instead of stacked rows — since it now has the
+     full container width to work with rather than a narrow side column. */
+  .conf-summary { margin: 2rem 0 0; padding: 1.5rem 2rem; }
+  .conf-summary__label { margin-bottom: 1.1rem; }
+  .conf-summary__list { display: flex; }
+  .conf-summary__row {
+    flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem;
+    padding: 0 2rem; border-top: none; border-left: 1px solid var(--forest-100);
+  }
+  .conf-summary__row:first-child { padding-left: 0; border-left: none; }
+  /* dd shrink-wraps to its content inside the column flex item, which can
+     wrap to two lines even with room to spare — nowrap keeps every value
+     on one line so the three columns line up evenly instead of the date
+     column (the longest value) sitting taller than the other two. */
+  .conf-summary__row dd { text-align: left; font-size: 1.05rem; white-space: nowrap; }
+}
+
+/* Focus visibility for keyboard users throughout. */
+a:focus-visible { outline: 2px solid var(--brand-green); outline-offset: 2px; }
