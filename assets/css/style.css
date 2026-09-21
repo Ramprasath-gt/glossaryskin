@@ -712,16 +712,30 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
   background: var(--forest-100); border: 1px solid var(--forest-100); border-radius: 1.1rem; overflow: hidden;
 }
-/* No real before/after photography exists yet — a flat, static placeholder
-   (never a fake or unrelated photo standing in for a result) until genuine
-   business-supplied images are added. See PROJECT NOTES in README/commit. */
+/* No real before/after photography exists yet — every img below points at
+   a single stock placeholder (results-sample-placeholder.jpg), stamped with
+   a "Sample" watermark so it can never be mistaken for a real result, even
+   if this ships before real business-supplied photos replace it. */
 .results__shot {
-  position: relative; aspect-ratio: 3 / 4;
+  position: relative; aspect-ratio: 3 / 4; overflow: hidden;
   background: linear-gradient(160deg, var(--ivory-200), var(--sage-100));
   display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.1rem;
 }
+.results__shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.results__shot::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(15, 42, 31, 0.55), transparent 45%);
+}
 .results__shot-label {
-  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--forest-500);
+  position: relative; z-index: 1;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ivory-50);
+}
+.results__watermark {
+  position: absolute; z-index: 2; top: 42%; left: -15%; width: 130%;
+  transform: rotate(-10deg); text-align: center; padding: 0.35rem 0;
+  background: rgba(15, 42, 31, 0.72); color: #fff;
+  font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em;
+  pointer-events: none;
 }
 .results__meta { margin-top: 1.1rem; display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
 .results__area { font-family: var(--font-serif); font-size: 1.2rem; color: var(--forest-900); }
