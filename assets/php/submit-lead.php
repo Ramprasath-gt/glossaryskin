@@ -93,7 +93,6 @@ $programNames = [
     'abdomen'  => 'Abdomen Inch Loss',
     'hips'     => 'Hips Inch Loss',
     'thighs'   => 'Thighs Inch Loss',
-    'emsculpt' => 'EMSCULPT',
     'not-sure' => "I'm Not Sure — Help Me Choose",
 ];
 $programKey = $lead['preferredProgram'] ?? '';

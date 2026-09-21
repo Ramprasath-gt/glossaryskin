@@ -656,22 +656,6 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .treatment-card:hover .treatment-card__visual img.is-loaded { transform: scale(1.02); }
 .treatment-card__visual span { position: relative; font-family: var(--font-serif); font-size: 1.3rem; color: var(--forest-700); }
 .treatment-card__visual:has(img.is-loaded) span { display: none; }
-/* EMSCULPT has no real treatment photo yet (placeholder pending a licensed
-   one) — rather than a plain "no image" gap, this doubles as the editorial
-   "20,000 contractions" technology callout the card needs anyway. Static,
-   not the shimmer-loading animation (nothing is ever going to load here). */
-.treatment-card__visual--tech {
-  animation: none; background: linear-gradient(160deg, var(--forest-900), var(--brand-green));
-  flex-direction: column; padding: 1rem;
-}
-.treatment-card__pulse { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.8; }
-.treatment-card__stat { position: relative; text-align: center; }
-.treatment-card__stat-num { display: block; font-family: var(--font-serif); font-size: 2.4rem; line-height: 1; color: #fff; }
-.treatment-card__stat-label {
-  display: block; margin-top: 0.4rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.1em; color: var(--ivory-100);
-}
-.treatment-card__stat-sub { display: block; margin-top: 0.2rem; font-size: 0.72rem; color: var(--forest-300); }
 .treatment-card__body { display: flex; flex-direction: column; flex: 1; padding: 0 0.4rem 1.6rem; }
 .treatment-card__body h3 { font-size: 1.2rem; }
 .treatment-card__subtitle { margin-top: 0.4rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--bronze); }
@@ -714,8 +698,40 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 }
 .term-tip:hover::after, .term-tip:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@media (min-width: 640px) { .contouring__grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .contouring { padding: 6rem 0; } }
+@media (min-width: 1024px) { .contouring { padding: 6rem 0; } .contouring__grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* =============================================================================
+   REAL TREATMENT JOURNEYS — before/after proof
+   Deliberately restrained: no arrows, no "RESULTS!" graphics, no percentage
+   badges — just a clean image pair and small type, so it reads as editorial
+   proof rather than a cheap beauty-clinic banner.
+============================================================================= */
+.results { background: var(--ivory-100); padding: 4rem 0; }
+.results__grid { margin-top: 3rem; display: grid; gap: 2.5rem; }
+.results__pair {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+  background: var(--forest-100); border: 1px solid var(--forest-100); border-radius: 1.1rem; overflow: hidden;
+}
+/* No real before/after photography exists yet — a flat, static placeholder
+   (never a fake or unrelated photo standing in for a result) until genuine
+   business-supplied images are added. See PROJECT NOTES in README/commit. */
+.results__shot {
+  position: relative; aspect-ratio: 3 / 4;
+  background: linear-gradient(160deg, var(--ivory-200), var(--sage-100));
+  display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.1rem;
+}
+.results__shot-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--forest-500);
+}
+.results__meta { margin-top: 1.1rem; display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.results__area { font-family: var(--font-serif); font-size: 1.2rem; color: var(--forest-900); }
+.results__treatment { font-size: 0.78rem; color: var(--forest-500); text-align: right; }
+.results__disclaimer {
+  margin: 2.5rem auto 0; max-width: 38rem; text-align: center; font-size: 0.74rem; line-height: 1.6; color: var(--forest-400);
+}
+
+@media (min-width: 768px) { .results__grid { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; } }
+@media (min-width: 1024px) { .results { padding: 6rem 0; } }
 
 /* =============================================================================
    TREATMENT TECHNOLOGY
