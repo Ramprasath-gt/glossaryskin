@@ -29,12 +29,6 @@ const SITE_CONFIG = {
   // blank to skip.
   googleSheetWebhookUrl: "https://script.google.com/macros/s/AKfycbzbOp0FCQ0_re7rBEBC12UxIJ9OlapM9SYL8nuBLttKZeYYJPQ7t32yoaeSxAkzIOooOg/exec",
 
-  // Google Maps JavaScript API key (public, browser-restricted — NOT a secret).
-  // Restrict it in Google Cloud Console to your production domain + the Maps
-  // JavaScript API, Places API and Geocoding API. Leave empty to skip the
-  // interactive map — the booking flow still works via geolocation + manual entry.
-  googleMapsApiKey: "",
-
   // Tracking IDs — leave blank to skip injecting that script entirely.
   metaPixelId: "",
   ga4Id: "",
@@ -66,13 +60,20 @@ const UX_CONFIG = {
 // -----------------------------------------------------------------------------
 // TRUST BADGES — "Why Clients Choose Glossary" photo grid.
 // -----------------------------------------------------------------------------
+// "Personalized Care" and "Private & Convenient Experience" use an `icon`
+// instead of a photo — their original images showed an unidentified
+// practitioner with no verified confirmation that they're part of the
+// Glossary team, so presenting that photo as a Glossary badge would imply
+// something unverified. Only FEATURED_DOCTOR's confirmed photo is used to
+// represent a person; every other badge is icon-based until a verified
+// Glossary photo exists for it.
 const TRUST_BADGES = [
   { label: "Certified Doctors", image: "assets/img/trust-certified-doctors.webp" },
   { label: "Premium At-Home Treatments", image: "assets/img/trust-at-home-treatments.webp" },
-  { label: "Personalized Care", image: "assets/img/trust-personalized-care.webp" },
+  { label: "Personalized Care", icon: "care" },
   { label: "Medical Supervision", image: "assets/img/trust-medical-supervision.webp" },
   { label: "Structured Monitoring", image: "assets/img/trust-structured-monitoring.webp" },
-  { label: "Private & Convenient Experience", image: "assets/img/trust-private-experience.webp" },
+  { label: "Private & Convenient Experience", icon: "private" },
 ];
 
 // Real, verified credential shown as a caption over the featured "Certified

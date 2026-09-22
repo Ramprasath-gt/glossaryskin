@@ -189,6 +189,23 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 /* -----------------------------------------------------------------------
+   WEIGHT-MANAGEMENT CALCULATOR — slider reflects the visitor's own entered
+   weight back at them. No formula: there is no verified calculation
+   methodology in this project, so this deliberately avoids predicting a
+   number and instead echoes the input and points to a real consultation.
+------------------------------------------------------------------------ */
+(function initCalculator() {
+  const slider = document.getElementById("calcWeight");
+  if (!slider) return;
+  const valueEl = document.getElementById("calcWeightValue");
+  const echoEl = document.getElementById("calcWeightEcho");
+  slider.addEventListener("input", () => {
+    valueEl.textContent = slider.value;
+    echoEl.textContent = slider.value;
+  });
+})();
+
+/* -----------------------------------------------------------------------
    RENDER: REAL TREATMENT JOURNEYS (before/after carousel)
 ------------------------------------------------------------------------ */
 // One journey visible at a time — a visitor evaluating proof shouldn't have
@@ -230,7 +247,7 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
       <div class="results__info">
         <h3>${j.treatment}</h3>
         <p>${j.description}</p>
-        <button class="btn btn--primary btn--md" data-open-booking data-program="${j.program}" data-source="results_${j.id}">Discuss My Treatment Options</button>
+        <button class="btn btn--primary btn--md" data-open-booking data-program="${j.program}" data-source="results_${j.id}">Explore My Treatment Options</button>
       </div>
     </div>`;
   }
@@ -287,6 +304,11 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
 // not a uniform marketing-claims grid.
 const trustBadgesGrid = document.getElementById("trustBadgesGrid");
 const [featuredBadge, ...supportingBadges] = TRUST_BADGES;
+// Inline icon set for badges with no verified photo — see TRUST_BADGES.
+const TRUST_ICONS = {
+  care: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6c0 4.6-8.8 10-8.8 10s-8.8-5.4-8.8-10a4.8 4.8 0 0 1 8.8-2.7A4.8 4.8 0 0 1 20.8 8.6Z"/></svg>',
+  private: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+};
 trustBadgesGrid.innerHTML = `
   <div class="trust-feature reveal">
     <div class="trust-feature__visual">
@@ -304,8 +326,12 @@ trustBadgesGrid.innerHTML = `
       .map(
         (b) => `
     <div class="trust-badge-card reveal">
-      <div class="trust-badge-card__visual">
-        <img src="${b.image}" alt="${b.label}" loading="lazy" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.remove()" />
+      <div class="trust-badge-card__visual${b.icon ? " trust-badge-card__visual--icon" : ""}">
+        ${
+          b.icon
+            ? TRUST_ICONS[b.icon] || ""
+            : `<img src="${b.image}" alt="${b.label}" loading="lazy" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.remove()" />`
+        }
       </div>
       <p>${b.label}</p>
     </div>`
@@ -490,9 +516,6 @@ const FIELD_FOR_ERROR = {
   err_mobile: "f_mobile",
   err_email: "f_email",
   err_city: "f_city",
-  err_address: "f_address",
-  err_house: "f_house",
-  err_area: "f_area",
   err_pincode: "f_pincode",
   err_phone: "f_phone",
 };
@@ -1005,103 +1028,22 @@ document.querySelector('[data-step-next="3"]').addEventListener("click", () => {
 });
 
 /* --------------------------- STEP 3: LOCATION --------------------------- */
-const useLocationBtn = document.getElementById("useLocationBtn");
-const locationNote = document.getElementById("locationNote");
-const mapContainer = document.getElementById("mapContainer");
-
-useLocationBtn.addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    locationNote.textContent = "Location isn't supported on this device — please enter your address manually.";
-    return;
-  }
-  useLocationBtn.disabled = true;
-  useLocationBtn.textContent = "Locating…";
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      bookingState.data.latitude = pos.coords.latitude;
-      bookingState.data.longitude = pos.coords.longitude;
-      locationNote.textContent = "Location captured. Drag the pin below if it isn't exact, or confirm your address.";
-      track(TRACK_EVENTS.LOCATION_ADDED, { method: "geolocation" });
-      useLocationBtn.disabled = false;
-      useLocationBtn.textContent = "📍 Use My Current Location";
-      renderMap();
-    },
-    () => {
-      locationNote.textContent = "Location permission denied — please enter your address manually below.";
-      useLocationBtn.disabled = false;
-      useLocationBtn.textContent = "📍 Use My Current Location";
-    },
-    { enableHighAccuracy: true, timeout: 8000 }
-  );
-});
-
-let mapsLoaderPromise = null;
-function loadGoogleMaps() {
-  if (!SITE_CONFIG.googleMapsApiKey) return Promise.reject(new Error("No Maps API key configured"));
-  if (window.google && window.google.maps) return Promise.resolve();
-  if (mapsLoaderPromise) return mapsLoaderPromise;
-  mapsLoaderPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${SITE_CONFIG.googleMapsApiKey}&libraries=places&loading=async`;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Google Maps"));
-    document.head.appendChild(script);
-  });
-  return mapsLoaderPromise;
-}
-
-let gmap = null;
-let gmarker = null;
-function renderMap() {
-  if (!SITE_CONFIG.googleMapsApiKey) return; // graceful fallback: no map, geolocation + manual entry still work
-  const { latitude, longitude } = bookingState.data;
-  if (latitude == null || longitude == null) return;
-
-  loadGoogleMaps()
-    .then(() => {
-      mapContainer.innerHTML = `<div class="gmap"></div><p class="gmap-hint">Drag the pin to your exact location</p>`;
-      const mapEl = mapContainer.querySelector(".gmap");
-      const google = window.google;
-      gmap = new google.maps.Map(mapEl, { center: { lat: latitude, lng: longitude }, zoom: 15, disableDefaultUI: true, zoomControl: true });
-      gmarker = new google.maps.Marker({ position: { lat: latitude, lng: longitude }, map: gmap, draggable: true });
-      gmarker.addListener("dragend", () => {
-        const pos = gmarker.getPosition();
-        bookingState.data.latitude = pos.lat();
-        bookingState.data.longitude = pos.lng();
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ location: { lat: pos.lat(), lng: pos.lng() } }, (results, status) => {
-          if (status === "OK" && results && results[0]) {
-            document.getElementById("f_address").value = results[0].formatted_address;
-            bookingState.data.address = results[0].formatted_address;
-          }
-        });
-      });
-    })
-    .catch(() => {
-      mapContainer.innerHTML = "";
-    });
-}
-
+// Simplified to pincode + phone only — no full address, no geolocation/map.
+// A Meta lead-gen form should stay low-friction; pincode is enough for the
+// team to confirm Delhi NCR serviceability before the actual call, and full
+// address collection can happen then instead of at the ad-click stage.
 document.getElementById("submitBtn").addEventListener("click", async () => {
-  const address = document.getElementById("f_address").value;
-  const houseNumber = document.getElementById("f_house").value;
-  const area = document.getElementById("f_area").value;
   const pincode = document.getElementById("f_pincode").value;
   const phone = document.getElementById("f_phone").value;
   const consent = document.getElementById("f_consent").checked;
 
   let valid = true;
-  if (!isNonEmpty(address)) { setError("err_address", "Please enter your address."); valid = false; } else setError("err_address", "");
-  if (!isNonEmpty(houseNumber)) { setError("err_house", "Please enter your house/flat/unit number."); valid = false; } else setError("err_house", "");
-  if (!isNonEmpty(area)) { setError("err_area", "Please enter your area/locality."); valid = false; } else setError("err_area", "");
   if (!isValidPincode(pincode)) { setError("err_pincode", "Enter a valid 6-digit pincode."); valid = false; } else setError("err_pincode", "");
   if (!isValidMobile(phone)) { setError("err_phone", "Enter a valid 10-digit phone number."); valid = false; } else setError("err_phone", "");
   if (!consent) { setError("err_submit", "Please accept the consent checkbox to continue."); valid = false; }
   if (!valid) { focusFirstInvalid(); return; }
 
-  Object.assign(bookingState.data, { address, houseNumber, area, pincode, phone, consent });
-  track(TRACK_EVENTS.LOCATION_ADDED, { method: "manual" });
+  Object.assign(bookingState.data, { pincode, phone, consent });
   track(TRACK_EVENTS.FORM_SUBMIT, { program: bookingState.data.preferredProgram });
 
   const submitBtn = document.getElementById("submitBtn");

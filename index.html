@@ -144,7 +144,6 @@
 
       <div class="hero__ctas">
         <button class="btn btn--primary btn--lg" data-open-booking data-source="hero_primary">Find the Right Approach for Me</button>
-        <button class="btn btn--secondary btn--lg" data-open-booking data-source="hero_secondary">Book a Consultation</button>
       </div>
       <p class="hero__no-pressure">No pressure. No obligation to proceed — just a conversation to start.</p>
 
@@ -164,7 +163,7 @@
         <span class="stars" aria-hidden="true">★★★★★</span>
         <span>5.0 · 74+ Google Reviews</span>
         <span class="hero__rating-divider" aria-hidden="true">·</span>
-        <span>Delhi, Noida &amp; Gurugram</span>
+        <span>Serving Delhi NCR</span>
       </div>
 
       <ul class="trust-strip">
@@ -359,6 +358,48 @@
 </section>
 
 <!-- =========================================================
+     WEIGHT-MANAGEMENT CALCULATOR — a compact, interactive intent-capture
+     tool, not a prediction engine. The project has no verified/approved
+     weight-loss calculation methodology anywhere (checked: no BMI logic,
+     no kg/percentage formula, nothing in SETUP.md or elsewhere), so this
+     deliberately does NOT compute or display a predicted kg number —
+     doing so would be an invented medical claim. It reflects the visitor's
+     own entered weight back to them and routes to a real consultation
+     instead. [NEEDS VERIFIED MEDICAL METHODOLOGY] if the business wants an
+     actual illustrative-range calculation added later.
+========================================================== -->
+<section class="calculator" id="calculator">
+  <div class="container">
+    <div class="calculator__card reveal">
+      <div class="section-head reveal">
+        <span class="section-tag">Weight Management</span>
+        <h2>Explore Your Weight-Management Goal</h2>
+        <p>Enter your current weight to see how a personalised Glossary plan could apply to you.</p>
+      </div>
+
+      <div class="calculator__body">
+        <div class="calculator__field">
+          <div class="calculator__field-top">
+            <label for="calcWeight">Current Weight</label>
+            <span class="calculator__value"><span id="calcWeightValue">70</span> kg</span>
+          </div>
+          <input type="range" id="calcWeight" min="40" max="150" value="70" step="1" aria-label="Current weight in kilograms" />
+        </div>
+
+        <div class="calculator__result">
+          <span class="calculator__result-label">Your Starting Point</span>
+          <p class="calculator__result-text">A personalised weight-management range for <strong><span id="calcWeightEcho">70</span> kg</strong> is determined after your medical consultation — not before.</p>
+        </div>
+
+        <button class="btn btn--primary btn--md full-width" data-open-booking data-program="glp1" data-source="calculator_section">Discuss My Options</button>
+      </div>
+
+      <p class="calculator__disclaimer">Illustrative estimate only. Individual results vary and depend on clinical assessment, treatment suitability and other factors. This does not guarantee weight loss.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
      BODY CONTOURING
 ========================================================== -->
 <section class="contouring" id="body-contouring">
@@ -387,7 +428,7 @@
             <li><span class="dot"></span>Manual Massage / Lymphatic Drainage</li>
             <li><span class="dot"></span>Heat Therapy + <button type="button" class="term-tip" data-tooltip="Electrical muscle stimulation.">EMS</button></li>
           </ul>
-          <button class="btn btn--primary btn--md full-width" data-open-booking data-program="abdomen" data-source="contouring_abdomen">Explore Abdomen</button>
+          <button class="btn btn--primary btn--md full-width" data-open-booking data-program="abdomen" data-source="contouring_abdomen">Explore My Treatment Options</button>
         </div>
       </div>
 
@@ -408,7 +449,7 @@
             <li><span class="dot"></span>Manual Massage / Lymphatic Drainage</li>
             <li><span class="dot"></span>Heat Therapy + <button type="button" class="term-tip" data-tooltip="Electrical muscle stimulation.">EMS</button></li>
           </ul>
-          <button class="btn btn--primary btn--md full-width" data-open-booking data-program="hips" data-source="contouring_hips">Explore Hips</button>
+          <button class="btn btn--primary btn--md full-width" data-open-booking data-program="hips" data-source="contouring_hips">Explore My Treatment Options</button>
         </div>
       </div>
 
@@ -429,7 +470,7 @@
             <li><span class="dot"></span>Manual Massage / Lymphatic Drainage</li>
             <li><span class="dot"></span>Heat Therapy + <button type="button" class="term-tip" data-tooltip="Electrical muscle stimulation.">EMS</button></li>
           </ul>
-          <button class="btn btn--primary btn--md full-width" data-open-booking data-program="thighs" data-source="contouring_thighs">Explore Thighs</button>
+          <button class="btn btn--primary btn--md full-width" data-open-booking data-program="thighs" data-source="contouring_thighs">Explore My Treatment Options</button>
         </div>
       </div>
     </div>
@@ -536,17 +577,41 @@
         </li>
         <li class="reveal">
           <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 13l2 2 4-4"/></svg></span>
-          <div><h3>Clinically Guided</h3><p>GLP-1 suitability is assessed by a medical professional before any prescription-based protocol is started.</p></div>
+          <div><h3>Clinically Guided</h3><p>GLP-1 suitability is assessed by a medical professional before any prescription-based protocol is started, with clear next steps at every stage.</p></div>
         </li>
         <li class="reveal">
           <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 0 0-14 0c0 4.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
           <div><h3>Targeted</h3><p>Body-contouring services are area-specific, so you can focus on the abdomen, hips or thighs individually.</p></div>
         </li>
-        <li class="reveal">
-          <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="M3 13l9 5 9-5"/></svg></span>
-          <div><h3>Structured</h3><p>Ongoing monitoring and clear next steps replace guesswork at every stage.</p></div>
-        </li>
       </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     REVIEWS
+========================================================== -->
+<section class="testimonials" id="reviews">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      <span class="section-tag">Client Reviews</span>
+      <h2>Trusted by Clients Who Choose Care at Home.</h2>
+      <div class="testimonials__rating">
+        <svg class="google-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span class="stars">★★★★★</span>
+        <span>5.0 · 74+ Google Reviews</span>
+      </div>
+      <div class="stats-strip">
+        <div class="stats-strip__item"><span class="stats-strip__num">74+</span><span class="stats-strip__label">Google Reviews</span></div>
+        <div class="stats-strip__item"><span class="stats-strip__num">25+</span><span class="stats-strip__label">Yrs Doctor Experience</span></div>
+        <div class="stats-strip__item"><span class="stats-strip__num">3</span><span class="stats-strip__label">Cities Served</span></div>
+      </div>
+    </div>
+
+    <div class="testimonials__layout" id="testimonialsRow"><!-- injected by main.js --></div>
+
+    <div class="center-cta reveal">
+      <button class="btn btn--primary btn--md" data-open-booking data-source="testimonials_section">Find the Right Approach for Me</button>
     </div>
   </div>
 </section>
@@ -613,34 +678,6 @@
 
     <div class="center-cta reveal">
       <button class="btn btn--primary btn--md" data-open-booking data-source="reels_section">Find the Right Approach for Me</button>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================
-     REVIEWS
-========================================================== -->
-<section class="testimonials" id="reviews">
-  <div class="container">
-    <div class="section-head section-head--center reveal">
-      <span class="section-tag">Client Reviews</span>
-      <h2>Trusted by Clients Who Choose Care at Home.</h2>
-      <div class="testimonials__rating">
-        <svg class="google-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-        <span class="stars">★★★★★</span>
-        <span>5.0 · 74+ Google Reviews</span>
-      </div>
-      <div class="stats-strip">
-        <div class="stats-strip__item"><span class="stats-strip__num">74+</span><span class="stats-strip__label">Google Reviews</span></div>
-        <div class="stats-strip__item"><span class="stats-strip__num">25+</span><span class="stats-strip__label">Yrs Doctor Experience</span></div>
-        <div class="stats-strip__item"><span class="stats-strip__num">3</span><span class="stats-strip__label">Cities Served</span></div>
-      </div>
-    </div>
-
-    <div class="testimonials__layout" id="testimonialsRow"><!-- injected by main.js --></div>
-
-    <div class="center-cta reveal">
-      <button class="btn btn--primary btn--md" data-open-booking data-source="testimonials_section">Find the Right Approach for Me</button>
     </div>
   </div>
 </section>
@@ -769,9 +806,9 @@
       <span class="section-tag section-tag--light">Your Next Step</span>
       <h2>Not Sure Where to Start?<br />Start With a Conversation.</h2>
       <p>Whether you're exploring GLP-1 weight management, looking to target stubborn inches, or simply want to understand your options, Glossary can help you take the next step.</p>
-      <p class="final-cta__areas">Serving clients across Delhi &middot; Noida &middot; Gurugram</p>
+      <p class="final-cta__areas">Serving Delhi NCR (Delhi &middot; Noida &middot; Gurugram)</p>
       <div class="final-cta__actions">
-        <button class="btn btn--primary btn--lg" data-open-booking data-source="final_cta_primary">Find the Right Approach for Me</button>
+        <button class="btn btn--primary btn--lg" data-open-booking data-source="final_cta_primary">Get My Personalised Options</button>
         <a href="https://wa.me/919821821567" target="_blank" rel="noopener noreferrer" class="btn btn--ghost-light btn--md" data-whatsapp-click data-source="final_cta">Chat on WhatsApp</a>
       </div>
       <p class="final-cta__reassurance">No pressure, no obligation to proceed — for GLP-1 programs, medical suitability is assessed before any prescription-based protocol is started.</p>
@@ -927,30 +964,7 @@
       <!-- STEP 4 -->
       <div class="form-step" data-step="4" hidden>
         <h3>Where should we reach you?</h3>
-        <p class="step-sub">Glossary is currently serving Delhi, Noida, Gurugram.</p>
-
-        <button type="button" class="btn btn--secondary btn--md full-width" id="useLocationBtn">📍 Use My Current Location</button>
-        <p class="field__hint" id="locationNote"></p>
-        <div id="mapContainer"></div>
-
-        <label class="field">
-          <span class="field__label">Exact Address <em>*</em></span>
-          <textarea id="f_address" rows="2" placeholder="Building, street, landmark"></textarea>
-          <span class="field__error" id="err_address"></span>
-        </label>
-
-        <div class="field-row">
-          <label class="field">
-            <span class="field__label">House / Flat / Unit No. <em>*</em></span>
-            <input type="text" id="f_house" placeholder="e.g. B-62" />
-            <span class="field__error" id="err_house"></span>
-          </label>
-          <label class="field">
-            <span class="field__label">Area / Locality <em>*</em></span>
-            <input type="text" id="f_area" placeholder="e.g. Sector 2" />
-            <span class="field__error" id="err_area"></span>
-          </label>
-        </div>
+        <p class="step-sub">Glossary currently serves Delhi NCR (Delhi, Noida, Gurugram). Your pincode helps our team confirm we can reach you.</p>
 
         <div class="field-row">
           <label class="field">

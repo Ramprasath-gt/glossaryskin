@@ -632,6 +632,41 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 }
 
 /* =============================================================================
+   WEIGHT-MANAGEMENT CALCULATOR — one compact card, not a full section of its
+   own visual weight. Interactive but deliberately doesn't predict a number.
+============================================================================= */
+.calculator { background: var(--ivory-100); padding: 3rem 0; }
+.calculator__card {
+  max-width: 30rem; margin: 0 auto; background: #fff; border: 1px solid var(--forest-100);
+  border-radius: 1.25rem; padding: 2rem 1.75rem; box-shadow: var(--shadow-card);
+}
+.calculator__card .section-head { text-align: center; }
+.calculator__body { margin-top: 1.5rem; }
+.calculator__field-top { display: flex; align-items: baseline; justify-content: space-between; }
+.calculator__field-top label { font-size: 0.8rem; font-weight: 700; color: var(--forest-700); }
+.calculator__value { font-family: var(--font-serif); font-size: 1.4rem; color: var(--brand-green); }
+.calculator__field input[type="range"] {
+  width: 100%; margin-top: 0.85rem; -webkit-appearance: none; appearance: none;
+  height: 0.4rem; border-radius: 999px; background: var(--forest-100); outline: none;
+}
+.calculator__field input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 1.3rem; height: 1.3rem; border-radius: 999px;
+  background: var(--brand-green); border: 3px solid #fff; box-shadow: var(--shadow-card); cursor: pointer;
+}
+.calculator__field input[type="range"]::-moz-range-thumb {
+  width: 1.3rem; height: 1.3rem; border-radius: 999px; background: var(--brand-green);
+  border: 3px solid #fff; box-shadow: var(--shadow-card); cursor: pointer;
+}
+.calculator__result {
+  margin-top: 1.25rem; padding: 1rem 1.1rem; border-radius: 0.9rem;
+  background: var(--sage-100); border: 1px solid var(--sage-200);
+}
+.calculator__result-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--forest-500); }
+.calculator__result-text { margin-top: 0.4rem; font-size: 0.88rem; line-height: 1.55; color: var(--forest-700); }
+.calculator__body .btn { margin-top: 1.25rem; }
+.calculator__disclaimer { margin-top: 1.25rem; text-align: center; font-size: 0.7rem; line-height: 1.5; color: var(--forest-400); }
+
+/* =============================================================================
    BODY CONTOURING (treatment cards — reuses the program-card visual language)
 ============================================================================= */
 .contouring { background: var(--ivory-100); padding: 4rem 0; }
@@ -1019,6 +1054,10 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .trust-badge-card__visual img.is-loaded { opacity: 1; }
 .trust-badge-card.is-visible .trust-badge-card__visual img.is-loaded { transform: scale(1); }
 .trust-badge-card:hover .trust-badge-card__visual img.is-loaded { transform: scale(1.02); }
+.trust-badge-card__visual--icon {
+  animation: none; background: var(--sage-100); display: flex; align-items: center; justify-content: center;
+}
+.trust-badge-card__visual--icon svg { width: 34%; height: 34%; color: var(--brand-green); }
 .trust-badge-card p { margin-top: 0.75rem; font-size: 0.85rem; font-weight: 700; color: var(--forest-700); line-height: 1.4; }
 
 @media (min-width: 640px) { .trust-badges__grid { grid-template-columns: repeat(3, 1fr); } }
@@ -1370,9 +1409,6 @@ body.modal-open { overflow: hidden; }
   .time-pref { grid-template-columns: repeat(4, 1fr); }
 }
 
-.gmap { width: 100%; height: 12rem; border-radius: 0.85rem; background: var(--forest-50); }
-.gmap-hint { margin-top: 0.4rem; text-align: center; font-size: 0.72rem; color: var(--forest-500); }
-#mapContainer:not(:empty) { margin-top: 1rem; }
 
 .consent { display: flex; align-items: flex-start; gap: 0.7rem; margin-top: 1.25rem; font-size: 0.75rem; line-height: 1.55; color: var(--forest-500); }
 .consent input { margin-top: 0.2rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; accent-color: var(--forest-800); }

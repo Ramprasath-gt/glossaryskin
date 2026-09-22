@@ -45,7 +45,7 @@ $required = $isPartial
     ? ['fullName', 'mobile', 'email', 'city', 'preferredProgram']
     : [
         'fullName', 'mobile', 'email', 'city', 'preferredProgram',
-        'appointmentDate', 'appointmentTime', 'address', 'area', 'pincode', 'phone',
+        'appointmentDate', 'appointmentTime', 'pincode', 'phone',
     ];
 foreach ($required as $field) {
     if (empty($lead[$field]) || trim((string) $lead[$field]) === '') {
@@ -236,7 +236,7 @@ function e($value)
 
 function customer_email_html($lead, $programName)
 {
-    $address = implode(', ', array_filter([$lead['houseNumber'] ?? '', $lead['area'], $lead['address'], $lead['pincode']]));
+    $pincode = $lead['pincode'] ?? '';
     return '
     <div style="font-family:Georgia,serif;background:#faf6ef;padding:32px;color:#123529;">
       <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #dde8e2;border-radius:12px;overflow:hidden;">
@@ -253,7 +253,7 @@ function customer_email_html($lead, $programName)
             <tr><td style="padding:8px 0;color:#5f8f79;">Program</td><td style="padding:8px 0;text-align:right;font-weight:600;">' . e($programName) . '</td></tr>
             <tr><td style="padding:8px 0;color:#5f8f79;border-top:1px solid #eef1ea;">Date</td><td style="padding:8px 0;text-align:right;font-weight:600;border-top:1px solid #eef1ea;">' . e(format_date_pretty($lead['appointmentDate'])) . '</td></tr>
             <tr><td style="padding:8px 0;color:#5f8f79;border-top:1px solid #eef1ea;">Time</td><td style="padding:8px 0;text-align:right;font-weight:600;border-top:1px solid #eef1ea;">' . e($lead['appointmentTime']) . '</td></tr>
-            <tr><td style="padding:8px 0;color:#5f8f79;border-top:1px solid #eef1ea;">Address</td><td style="padding:8px 0;text-align:right;font-weight:600;border-top:1px solid #eef1ea;">' . e($address) . '</td></tr>
+            <tr><td style="padding:8px 0;color:#5f8f79;border-top:1px solid #eef1ea;">Pincode</td><td style="padding:8px 0;text-align:right;font-weight:600;border-top:1px solid #eef1ea;">' . e($pincode) . '</td></tr>
           </table>
           <p style="font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#5f8f79;margin-top:24px;">
             Please keep your phone available — our team will call you on ' . e($lead['phone']) . ' to confirm your consultation.
@@ -282,12 +282,8 @@ function internal_email_html($lead, $programName, $isPartial)
     } else {
         $rows['Appointment Date'] = format_date_pretty($lead['appointmentDate'] ?? '');
         $rows['Appointment Time'] = $lead['appointmentTime'] ?? '';
-        $rows['House/Flat/Unit'] = $lead['houseNumber'] ?? '';
-        $rows['Area/Locality'] = $lead['area'] ?? '';
-        $rows['Full Address'] = $lead['address'] ?? '';
         $rows['Pincode'] = $lead['pincode'] ?? '';
         $rows['Contact Phone'] = $lead['phone'] ?? '';
-        $rows['Coordinates'] = (!empty($lead['latitude']) && !empty($lead['longitude'])) ? $lead['latitude'] . ', ' . $lead['longitude'] : 'Not shared';
     }
 
     $rowsHtml = '';
