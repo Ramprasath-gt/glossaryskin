@@ -199,10 +199,23 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
   if (!slider) return;
   const valueEl = document.getElementById("calcWeightValue");
   const echoEl = document.getElementById("calcWeightEcho");
-  slider.addEventListener("input", () => {
-    valueEl.textContent = slider.value;
-    echoEl.textContent = slider.value;
-  });
+  const needle = document.getElementById("calcNeedle");
+  const dialFill = document.getElementById("calcDialFill");
+  const min = Number(slider.min);
+  const max = Number(slider.max);
+  const dialLength = dialFill ? dialFill.getTotalLength() : 0;
+  if (dialFill) dialFill.style.strokeDasharray = String(dialLength);
+
+  function update() {
+    const value = slider.value;
+    valueEl.textContent = value;
+    echoEl.textContent = value;
+    const fraction = (Number(value) - min) / (max - min);
+    if (dialFill) dialFill.style.strokeDashoffset = String(dialLength * (1 - fraction));
+    if (needle) needle.style.transform = `rotate(${-90 + fraction * 180}deg)`;
+  }
+  slider.addEventListener("input", update);
+  update();
 })();
 
 /* -----------------------------------------------------------------------

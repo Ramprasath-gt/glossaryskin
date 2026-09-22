@@ -378,17 +378,26 @@
       </div>
 
       <div class="calculator__body">
-        <div class="calculator__field">
-          <div class="calculator__field-top">
-            <label for="calcWeight">Current Weight</label>
-            <span class="calculator__value"><span id="calcWeightValue">70</span> kg</span>
-          </div>
-          <input type="range" id="calcWeight" min="40" max="150" value="70" step="1" aria-label="Current weight in kilograms" />
+        <label for="calcWeight" class="calculator__label">Choose Your Current Weight</label>
+
+        <div class="calculator__gauge">
+          <svg class="calculator__dial" viewBox="0 0 200 110" aria-hidden="true">
+            <path d="M10 100 A90 90 0 0 1 190 100" fill="none" stroke="var(--forest-100)" stroke-width="10" stroke-linecap="round" />
+            <path id="calcDialFill" d="M10 100 A90 90 0 0 1 190 100" fill="none" stroke="var(--brand-green)" stroke-width="10" stroke-linecap="round" />
+            <line id="calcNeedle" x1="100" y1="100" x2="100" y2="28" stroke="var(--clay)" stroke-width="3" stroke-linecap="round" style="transform-origin: 100px 100px;" />
+            <circle cx="100" cy="100" r="6" fill="var(--brand-green)" />
+          </svg>
+          <div class="calculator__reading"><span id="calcWeightValue">70</span><span class="calculator__reading-unit">kg</span></div>
         </div>
 
+        <input type="range" id="calcWeight" min="40" max="150" value="70" step="1" aria-label="Current weight in kilograms" class="calculator__slider" />
+
         <div class="calculator__result">
-          <span class="calculator__result-label">Your Starting Point</span>
-          <p class="calculator__result-text">A personalised weight-management range for <strong><span id="calcWeightEcho">70</span> kg</strong> is determined after your medical consultation — not before.</p>
+          <div class="calculator__result-row">
+            <span>Your Weight Today</span>
+            <strong><span id="calcWeightEcho">70</span> kg</strong>
+          </div>
+          <p class="calculator__result-text">A personalised weight-management range is determined after your medical consultation — not before.</p>
         </div>
 
         <button class="btn btn--primary btn--md full-width" data-open-booking data-program="glp1" data-source="calculator_section">Discuss My Options</button>

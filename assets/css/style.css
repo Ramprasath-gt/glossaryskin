@@ -642,18 +642,32 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 }
 .calculator__card .section-head { text-align: center; }
 .calculator__body { margin-top: 1.5rem; }
-.calculator__field-top { display: flex; align-items: baseline; justify-content: space-between; }
-.calculator__field-top label { font-size: 0.8rem; font-weight: 700; color: var(--forest-700); }
-.calculator__value { font-family: var(--font-serif); font-size: 1.4rem; color: var(--brand-green); }
-.calculator__field input[type="range"] {
-  width: 100%; margin-top: 0.85rem; -webkit-appearance: none; appearance: none;
+.calculator__label {
+  display: block; text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--forest-700);
+}
+
+/* ---- Gauge: decorative dial that tracks the slider, no predicted value.
+   The reading sits BELOW the dial (not overlaid on the pivot) so the needle
+   never sweeps through the number at the min/max ends of the range. ---- */
+.calculator__gauge { max-width: 15rem; margin: 0.75rem auto 0; }
+.calculator__dial { display: block; width: 100%; height: auto; }
+#calcDialFill { transition: stroke-dashoffset 0.15s ease; }
+#calcNeedle { transition: transform 0.15s ease; }
+.calculator__reading {
+  display: flex; align-items: baseline; justify-content: center; gap: 0.25rem; margin-top: -0.5rem;
+  font-family: var(--font-serif); font-size: 2.1rem; font-weight: 700; color: var(--forest-900);
+}
+.calculator__reading-unit { font-family: var(--font-sans); font-size: 0.95rem; font-weight: 700; color: var(--forest-500); }
+
+.calculator__slider {
+  width: 100%; margin-top: 1rem; -webkit-appearance: none; appearance: none;
   height: 0.4rem; border-radius: 999px; background: var(--forest-100); outline: none;
 }
-.calculator__field input[type="range"]::-webkit-slider-thumb {
+.calculator__slider::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none; width: 1.3rem; height: 1.3rem; border-radius: 999px;
   background: var(--brand-green); border: 3px solid #fff; box-shadow: var(--shadow-card); cursor: pointer;
 }
-.calculator__field input[type="range"]::-moz-range-thumb {
+.calculator__slider::-moz-range-thumb {
   width: 1.3rem; height: 1.3rem; border-radius: 999px; background: var(--brand-green);
   border: 3px solid #fff; box-shadow: var(--shadow-card); cursor: pointer;
 }
@@ -661,8 +675,12 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   margin-top: 1.25rem; padding: 1rem 1.1rem; border-radius: 0.9rem;
   background: var(--sage-100); border: 1px solid var(--sage-200);
 }
-.calculator__result-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--forest-500); }
-.calculator__result-text { margin-top: 0.4rem; font-size: 0.88rem; line-height: 1.55; color: var(--forest-700); }
+.calculator__result-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: 0.85rem; color: var(--forest-700); padding-bottom: 0.75rem; border-bottom: 1px solid var(--sage-200);
+}
+.calculator__result-row strong { font-family: var(--font-serif); font-size: 1.1rem; color: var(--brand-green); }
+.calculator__result-text { margin-top: 0.65rem; font-size: 0.85rem; line-height: 1.55; color: var(--forest-600); }
 .calculator__body .btn { margin-top: 1.25rem; }
 .calculator__disclaimer { margin-top: 1.25rem; text-align: center; font-size: 0.7rem; line-height: 1.5; color: var(--forest-400); }
 
@@ -772,23 +790,17 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .results__stage { margin-top: 1.5rem; touch-action: pan-y; }
 .results__slide { display: none; }
 .results__slide.is-active { display: block; }
-.results__pair {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-  background: var(--forest-100); border: 1px solid var(--forest-100); border-radius: 1.1rem; overflow: hidden;
-}
+.results__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
 .results__shot {
-  position: relative; aspect-ratio: 3 / 4; overflow: hidden;
+  position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 1rem;
   background: linear-gradient(160deg, var(--ivory-200), var(--sage-100));
-  display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.1rem;
+  box-shadow: var(--shadow-card);
 }
 .results__shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
-.results__shot::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(to top, rgba(15, 42, 31, 0.5), transparent 40%);
-}
 .results__shot-label {
-  position: relative; z-index: 1;
-  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ivory-50);
+  position: absolute; left: 0.6rem; bottom: 0.6rem; z-index: 1;
+  padding: 0.3rem 0.65rem; border-radius: 999px; background: rgba(15, 42, 31, 0.72); backdrop-filter: blur(2px);
+  font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ivory-50);
 }
 
 /* No verified matched pair for this area yet — an honest "coming soon"
@@ -802,7 +814,10 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .results__pending svg { width: 2rem; height: 2rem; color: var(--forest-400); }
 .results__pending p { max-width: 20rem; font-size: 0.85rem; line-height: 1.5; color: var(--forest-500); }
 
-.results__info { margin-top: 1.25rem; text-align: center; }
+.results__info {
+  margin-top: 1rem; text-align: center; background: #fff; border: 1px solid var(--forest-100);
+  border-radius: 1rem; padding: 1.25rem 1.4rem; box-shadow: var(--shadow-card);
+}
 .results__info h3 { font-size: 1.3rem; }
 .results__info p { margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.6; color: var(--forest-600); max-width: 30rem; margin-left: auto; margin-right: auto; }
 .results__info .btn { margin-top: 1.1rem; }
