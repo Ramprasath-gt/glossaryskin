@@ -439,91 +439,35 @@
 <!-- =========================================================
      REAL TREATMENT JOURNEYS — before/after proof, placed right after the
      service grid (the visitor has just picked a treatment) and before the
-     technology explainer (how it works matters less than "does it work"
-     at this point in the scroll). No real before/after photography exists
-     in the project yet — every pair below is a clearly-marked placeholder,
-     never two unrelated photos mislabeled as a result. Swap in genuine,
-     business-supplied photos (matched angle/lighting/crop per pair) before
-     this section reaches real ad traffic.
+     technology explainer. Slides are rendered from RESULTS_JOURNEYS in
+     config.js — only Hips and Thighs currently have a verified, matched
+     before/after pair from the same client; Abdomen renders as an honest
+     "photos coming soon" slide rather than a stock or mismatched image.
+     See main.js for the carousel logic.
 ========================================================== -->
 <section class="results" id="results">
   <div class="container">
     <div class="section-head section-head--center reveal">
       <span class="section-tag">Real Treatment Journeys</span>
-      <h2>Real Journeys. Real Changes.</h2>
-      <p>Explore before-and-after examples from Glossary's body-contouring treatments.</p>
+      <h2>Real Treatment Journeys</h2>
+      <p>See how personalised treatment journeys can look across different body-contouring goals.</p>
     </div>
 
-    <div class="results__grid">
-      <!-- DEV NOTE: results-sample-placeholder.jpg is a stock photo used ONLY
-           to preview this section's layout for internal/client review. It is
-           NOT a real patient and NOT a real result. Replace every instance
-           below with genuine, business-supplied before/after photography
-           (matched angle/lighting/crop per pair) before this section is
-           shown to real site visitors or ad traffic. -->
-      <div class="results__card reveal">
-        <div class="results__pair">
-          <div class="results__shot">
-            <img src="assets/img/results-sample-placeholder.jpg" alt="Sample placeholder image — not a real patient result" loading="lazy" decoding="async" />
-            <span class="results__watermark">Sample</span>
-            <span class="results__shot-label">Before</span>
-          </div>
-          <div class="results__shot">
-            <img src="assets/img/results-sample-placeholder.jpg" alt="Sample placeholder image — not a real patient result" loading="lazy" decoding="async" />
-            <span class="results__watermark">Sample</span>
-            <span class="results__shot-label">After</span>
-          </div>
-        </div>
-        <div class="results__meta">
-          <span class="results__area">Abdomen</span>
-          <span class="results__treatment">Treatment: Abdomen Inch Loss</span>
-        </div>
+    <div class="results__carousel reveal">
+      <div class="results__nav">
+        <button type="button" class="results__arrow" id="resultsPrev" aria-label="Previous treatment journey">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="results__dots" id="resultsDots"><!-- injected by main.js --></div>
+        <button type="button" class="results__arrow" id="resultsNext" aria-label="Next treatment journey">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
 
-      <div class="results__card reveal">
-        <div class="results__pair">
-          <div class="results__shot">
-            <img src="assets/img/results-sample-placeholder.jpg" alt="Sample placeholder image — not a real patient result" loading="lazy" decoding="async" />
-            <span class="results__watermark">Sample</span>
-            <span class="results__shot-label">Before</span>
-          </div>
-          <div class="results__shot">
-            <img src="assets/img/results-sample-placeholder.jpg" alt="Sample placeholder image — not a real patient result" loading="lazy" decoding="async" />
-            <span class="results__watermark">Sample</span>
-            <span class="results__shot-label">After</span>
-          </div>
-        </div>
-        <div class="results__meta">
-          <span class="results__area">Hips</span>
-          <span class="results__treatment">Treatment: Hips Inch Loss</span>
-        </div>
-      </div>
-
-      <div class="results__card reveal">
-        <div class="results__pair">
-          <div class="results__shot">
-            <img src="assets/img/results-sample-placeholder.jpg" alt="Sample placeholder image — not a real patient result" loading="lazy" decoding="async" />
-            <span class="results__watermark">Sample</span>
-            <span class="results__shot-label">Before</span>
-          </div>
-          <div class="results__shot">
-            <img src="assets/img/results-sample-placeholder.jpg" alt="Sample placeholder image — not a real patient result" loading="lazy" decoding="async" />
-            <span class="results__watermark">Sample</span>
-            <span class="results__shot-label">After</span>
-          </div>
-        </div>
-        <div class="results__meta">
-          <span class="results__area">Thighs</span>
-          <span class="results__treatment">Treatment: Thighs Inch Loss</span>
-        </div>
-      </div>
+      <div class="results__stage" id="resultsStage"><!-- injected by main.js --></div>
     </div>
 
     <p class="results__disclaimer reveal">Individual results vary. Before-and-after images represent individual treatment journeys and are not a guarantee of similar results.</p>
-
-    <div class="center-cta reveal">
-      <button class="btn btn--primary btn--md" data-open-booking data-source="results_section">Find the Right Approach for Me</button>
-    </div>
   </div>
 </section>
 

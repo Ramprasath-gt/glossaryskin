@@ -143,6 +143,49 @@ const TESTIMONIALS = [
 ];
 
 // -----------------------------------------------------------------------------
+// RESULTS JOURNEYS — "Real Treatment Journeys" before/after carousel. Each
+// entry needs a genuine, verified before/after pair from the same client —
+// never a stock photo, never two unrelated photos. `before`/`after` are left
+// null until a verified matched pair exists for that area; the carousel
+// renders those as a "photos coming soon" slide instead of inventing one.
+// age/sessions/duration are deliberately not fields here at all — the
+// project has no verified value for any of them for any client yet. Add a
+// field only once a real, confirmed number exists for that specific pair.
+// -----------------------------------------------------------------------------
+const RESULTS_JOURNEYS = [
+  {
+    id: "abdomen",
+    area: "Abdomen",
+    treatment: "Abdomen Inch Loss",
+    program: "abdomen",
+    description: "Targeted body-contouring treatment focused on the abdomen area as part of an individual treatment plan.",
+    before: null, // [NEEDS VERIFIED CLIENT DATA] — no confirmed matched before/after pair yet
+    after: null,
+    avatar: null,
+  },
+  {
+    id: "hips",
+    area: "Hips",
+    treatment: "Hips Inch Loss",
+    program: "hips",
+    description: "Targeted body-contouring treatment focused on the hips as part of an individual treatment plan.",
+    before: "assets/img/results-hips-before.webp",
+    after: "assets/img/results-hips-after.webp",
+    avatar: "assets/img/results-hips-avatar.webp",
+  },
+  {
+    id: "thighs",
+    area: "Thighs",
+    treatment: "Thighs Inch Loss",
+    program: "thighs",
+    description: "Targeted body-contouring treatment focused on the thighs as part of an individual treatment plan.",
+    before: "assets/img/results-thighs-before.webp",
+    after: "assets/img/results-thighs-after.webp",
+    avatar: "assets/img/results-thighs-avatar.webp",
+  },
+];
+
+// -----------------------------------------------------------------------------
 // REELS — shown as a 4-up phone-mockup grid; tapping a tile opens that video
 // full-screen with sound. Drop video files in at these EXACT paths
 // (assets/video/reel-1.mp4, etc, with matching posters in assets/img/) and

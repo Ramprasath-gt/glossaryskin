@@ -701,51 +701,82 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 @media (min-width: 1024px) { .contouring { padding: 6rem 0; } .contouring__grid { grid-template-columns: repeat(3, 1fr); } }
 
 /* =============================================================================
-   REAL TREATMENT JOURNEYS — before/after proof
-   Deliberately restrained: no arrows, no "RESULTS!" graphics, no percentage
-   badges — just a clean image pair and small type, so it reads as editorial
-   proof rather than a cheap beauty-clinic banner.
+   REAL TREATMENT JOURNEYS — before/after carousel
+   One journey visible at a time — deliberately restrained: no arrows drawn
+   over photos, no "RESULTS!" graphics, no percentage badges. Compact
+   editorial rhythm, not another oversized full-screen block.
 ============================================================================= */
-.results { background: var(--ivory-100); padding: 4rem 0; }
-.results__grid { margin-top: 3rem; display: grid; gap: 2.5rem; }
+.results { background: var(--ivory-100); padding: 3rem 0; }
+.results__carousel { margin-top: 2rem; max-width: 34rem; margin-left: auto; margin-right: auto; }
+
+/* ---- Nav: prev arrow / dot indicators / next arrow ---- */
+.results__nav { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+.results__arrow {
+  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem; border-radius: 999px; background: #fff;
+  border: 1px solid var(--forest-100); color: var(--forest-700); box-shadow: var(--shadow-card);
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.results__arrow svg { width: 1.1rem; height: 1.1rem; }
+.results__arrow:hover { border-color: var(--brand-green); color: var(--brand-green); }
+.results__arrow:active { transform: scale(0.94); }
+.results__dots { display: flex; align-items: center; gap: 0.6rem; }
+.results__dot {
+  flex-shrink: 0; width: 2.5rem; height: 2.5rem; border-radius: 999px; overflow: hidden;
+  background: var(--forest-100); border: 2px solid transparent; padding: 0;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+.results__dot img { width: 100%; height: 100%; object-fit: cover; }
+.results__dot-fallback {
+  display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;
+  font-family: var(--font-serif); font-size: 0.9rem; color: var(--forest-500);
+}
+.results__dot.is-active { border-color: var(--brand-green); transform: scale(1.08); }
+
+/* ---- Stage: one slide visible at a time ---- */
+.results__stage { margin-top: 1.5rem; touch-action: pan-y; }
+.results__slide { display: none; }
+.results__slide.is-active { display: block; }
 .results__pair {
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
   background: var(--forest-100); border: 1px solid var(--forest-100); border-radius: 1.1rem; overflow: hidden;
 }
-/* No real before/after photography exists yet — every img below points at
-   a single stock placeholder (results-sample-placeholder.jpg), stamped with
-   a "Sample" watermark so it can never be mistaken for a real result, even
-   if this ships before real business-supplied photos replace it. */
 .results__shot {
   position: relative; aspect-ratio: 3 / 4; overflow: hidden;
   background: linear-gradient(160deg, var(--ivory-200), var(--sage-100));
   display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.1rem;
 }
-.results__shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.results__shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 .results__shot::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(to top, rgba(15, 42, 31, 0.55), transparent 45%);
+  background: linear-gradient(to top, rgba(15, 42, 31, 0.5), transparent 40%);
 }
 .results__shot-label {
   position: relative; z-index: 1;
   font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ivory-50);
 }
-.results__watermark {
-  position: absolute; z-index: 2; top: 42%; left: -15%; width: 130%;
-  transform: rotate(-10deg); text-align: center; padding: 0.35rem 0;
-  background: rgba(15, 42, 31, 0.72); color: #fff;
-  font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em;
-  pointer-events: none;
+
+/* No verified matched pair for this area yet — an honest "coming soon"
+   panel, matched in footprint to .results__pair so switching slides
+   doesn't jump the layout. Never a stock or mismatched photo. */
+.results__pending {
+  aspect-ratio: 3 / 2; border-radius: 1.1rem; border: 1.5px dashed var(--forest-200);
+  background: var(--sage-100); display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.75rem; padding: 1.5rem; text-align: center;
 }
-.results__meta { margin-top: 1.1rem; display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
-.results__area { font-family: var(--font-serif); font-size: 1.2rem; color: var(--forest-900); }
-.results__treatment { font-size: 0.78rem; color: var(--forest-500); text-align: right; }
+.results__pending svg { width: 2rem; height: 2rem; color: var(--forest-400); }
+.results__pending p { max-width: 20rem; font-size: 0.85rem; line-height: 1.5; color: var(--forest-500); }
+
+.results__info { margin-top: 1.25rem; text-align: center; }
+.results__info h3 { font-size: 1.3rem; }
+.results__info p { margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.6; color: var(--forest-600); max-width: 30rem; margin-left: auto; margin-right: auto; }
+.results__info .btn { margin-top: 1.1rem; }
+
 .results__disclaimer {
-  margin: 2.5rem auto 0; max-width: 38rem; text-align: center; font-size: 0.74rem; line-height: 1.6; color: var(--forest-400);
+  margin: 2rem auto 0; max-width: 38rem; text-align: center; font-size: 0.74rem; line-height: 1.6; color: var(--forest-400);
 }
 
-@media (min-width: 768px) { .results__grid { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; } }
-@media (min-width: 1024px) { .results { padding: 6rem 0; } }
+@media (min-width: 1024px) { .results { padding: 4.5rem 0; } }
 
 /* =============================================================================
    TREATMENT TECHNOLOGY
