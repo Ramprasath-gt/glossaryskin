@@ -746,13 +746,13 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    placeholder that recedes rather than drawing a dashed box around empty
    space. Never a stock or mismatched photo. */
 .results__pending {
-  aspect-ratio: 3 / 4; border-radius: 0.35rem;
+  aspect-ratio: 3 / 4; border-radius: 0.35rem; border: 1px solid var(--forest-100);
   background: linear-gradient(160deg, var(--ivory-200), var(--sage-100));
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 0.5rem; padding: 1.25rem; text-align: center;
+  justify-content: center; gap: 0.65rem; padding: 1.25rem; text-align: center;
 }
-.results__pending svg { width: 1.5rem; height: 1.5rem; color: var(--forest-300); }
-.results__pending p { font-size: 0.76rem; line-height: 1.5; color: var(--forest-400); }
+.results__pending svg { width: 1.9rem; height: 1.9rem; color: var(--forest-300); }
+.results__pending p { font-size: 0.8rem; line-height: 1.5; color: var(--forest-400); max-width: 9rem; }
 
 .results__info { margin-top: 0.75rem; }
 .results__info h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--forest-900); }
@@ -1153,7 +1153,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   backdrop-filter: blur(8px);
 }
 .sticky-cta .btn { width: 100%; }
-.sticky-cta.is-hidden { display: none; }
+.sticky-cta.is-hidden, .sticky-cta.is-hidden-hero { display: none; }
 .whatsapp-fab {
   /* WhatsApp's own brand green, not the site's forest green — the whole
      point of this icon is to be instantly recognisable as WhatsApp at a

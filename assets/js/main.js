@@ -567,6 +567,23 @@ const stepLabel = document.getElementById("stepLabel");
 const progressBars = [1, 2, 3, 4].map((n) => document.getElementById("progressBar" + n));
 const stickyCta = document.getElementById("stickyCta");
 
+// The hero already has its own inline CTA — showing the sticky bar on top
+// of it too just doubles up the ask in the first viewport. Keep the sticky
+// bar hidden until the hero (and its own CTA) has scrolled out of view.
+(function hideStickyCtaOverHero() {
+  const hero = document.getElementById("top");
+  if (!hero || !stickyCta) return;
+  const heroObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        stickyCta.classList.toggle("is-hidden-hero", entry.isIntersecting);
+      });
+    },
+    { threshold: 0 }
+  );
+  heroObserver.observe(hero);
+})();
+
 const STEP_LABELS = ["About You", "Your Goal", "Schedule", "Location"];
 const TOTAL_STEPS = 4;
 
