@@ -557,11 +557,12 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    CTA right — all on a single warm-neutral ground (not two differently
    tinted columns). No predicted output: the result panel only ever reflects
    the visitor's own entered numbers (weight, BMI), never a forecast. */
-.calculator { background: var(--ivory-100); padding: 3.5rem 0; }
-.calculator__card {
-  max-width: 54rem; margin: 0 auto; background: var(--sage-100); border: 1px solid var(--sage-200);
-  border-radius: 1.25rem; padding: 2rem 1.5rem;
-}
+/* The section itself IS the flat sage ground — no separate rounded/
+   bordered card sitting on a different-colored page background. One flat
+   surface, edge to edge, matching the reference's single-plane composition
+   instead of a "card inside a section" look. */
+.calculator { background: var(--sage-100); padding: 3.5rem 0; }
+.calculator__card { max-width: 54rem; margin: 0 auto; padding: 0 1.5rem; }
 .calculator__head { margin-bottom: 0.5rem; }
 .calculator__head h2 { margin-top: 0.5rem; font-size: 1.5rem; }
 .calculator__layout { display: grid; gap: 1.75rem; }
@@ -627,9 +628,9 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .calculator__disclaimer { margin-top: 0.9rem; text-align: center; font-size: 0.7rem; line-height: 1.5; color: var(--forest-600); }
 
 @media (min-width: 768px) {
-  .calculator__card { padding: 2.75rem 3rem; }
+  .calculator__card { padding: 0 2rem; }
   .calculator__head { text-align: center; margin-bottom: 0.75rem; }
-  .calculator__layout { grid-template-columns: 1fr 1fr; align-items: center; gap: 2.5rem; margin-top: 0.75rem; }
+  .calculator__layout { grid-template-columns: 1fr 1fr; align-items: center; gap: 3rem; margin-top: 0.75rem; }
 }
 
 /* =============================================================================
@@ -741,26 +742,27 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ivory-50);
 }
 
-/* No verified matched pair for this area yet — an honest "coming soon"
-   placeholder in the same grid slot. Never a stock or mismatched photo. */
+/* No verified matched pair for this area yet — a quiet, borderless
+   placeholder that recedes rather than drawing a dashed box around empty
+   space. Never a stock or mismatched photo. */
 .results__pending {
-  aspect-ratio: 3 / 4; border-radius: 0.35rem; border: 1.5px dashed var(--forest-200);
-  background: var(--sage-100); display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 0.6rem; padding: 1.25rem; text-align: center;
+  aspect-ratio: 3 / 4; border-radius: 0.35rem;
+  background: linear-gradient(160deg, var(--ivory-200), var(--sage-100));
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.5rem; padding: 1.25rem; text-align: center;
 }
-.results__pending svg { width: 1.75rem; height: 1.75rem; color: var(--forest-400); }
-.results__pending p { font-size: 0.78rem; line-height: 1.5; color: var(--forest-500); }
+.results__pending svg { width: 1.5rem; height: 1.5rem; color: var(--forest-300); }
+.results__pending p { font-size: 0.76rem; line-height: 1.5; color: var(--forest-400); }
 
-.results__info { margin-top: 0.9rem; }
-.results__info h3 { font-family: var(--font-serif); font-size: 1.15rem; color: var(--forest-900); }
+.results__info { margin-top: 0.75rem; }
+.results__info h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--forest-900); }
 
 /* A real client's own words about this treatment — reused from
    TESTIMONIALS, never claimed to caption the photographed person. */
 .results__quote {
-  margin-top: 0.6rem; font-size: 0.82rem; line-height: 1.5; color: var(--forest-600); font-style: italic;
+  margin-top: 0.5rem; font-size: 0.8rem; line-height: 1.5; color: var(--forest-600); font-style: italic;
 }
-.results__quote span { display: block; margin-top: 0.35rem; font-size: 0.7rem; font-style: normal; font-weight: 700; color: var(--forest-500); }
-.results__info .btn { margin-top: 0.9rem; width: 100%; }
+.results__quote span { display: block; margin-top: 0.3rem; font-size: 0.68rem; font-style: normal; font-weight: 700; color: var(--forest-500); }
 
 .results__disclaimer {
   margin: 2rem auto 0; max-width: 38rem; text-align: center; font-size: 0.74rem; line-height: 1.6; color: var(--forest-400);

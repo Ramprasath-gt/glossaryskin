@@ -283,7 +283,6 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
       <div class="results__info">
         <h3>${j.treatment}</h3>
         ${quote}
-        <button class="btn btn--secondary btn--md" data-open-booking data-program="${j.program}" data-source="results_${j.id}">Explore My Treatment Options</button>
       </div>
     </div>`;
   }
