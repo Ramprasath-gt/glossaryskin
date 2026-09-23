@@ -426,7 +426,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 
 @media (min-width: 640px) { .goal-select__grid { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 1024px) {
-  .goal-select { padding: 6rem 0; }
+  .goal-select { padding: 4.5rem 0; }
   .goal-select__grid { grid-template-columns: repeat(5, 1fr); }
 }
 
@@ -447,7 +447,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .approach__step p { margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.6; color: var(--forest-600); max-width: 30rem; }
 
 @media (min-width: 1024px) {
-  .approach { padding: 6rem 0; }
+  .approach { padding: 4rem 0; }
   .approach__timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
   .approach__step { flex-direction: column; gap: 0.75rem; padding: 0 0 0 0; border-top: none; }
   /* Thin connecting rule running behind all four steps' numerals. */
@@ -544,7 +544,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .glp1__content .reassurance { text-align: left; }
 
 @media (min-width: 1024px) {
-  .glp1 { padding: 6rem 0; }
+  .glp1 { padding: 4.5rem 0; }
   .glp1__layout { grid-template-columns: 0.85fr 1.15fr; gap: 4rem; }
 }
 
@@ -649,10 +649,10 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    captioned directly on it — a treatment panel, not a boxed icon+text card. */
 .treatment-card {
   display: flex; flex-direction: column; height: 100%; border-radius: 1.25rem;
-  border: 1px solid var(--forest-100); background: #fff; box-shadow: var(--shadow-card);
+  border: 1px solid var(--forest-100); background: #fff;
   overflow: hidden; transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-.treatment-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+.treatment-card:hover { box-shadow: var(--shadow-card); transform: translateY(-2px); }
 .treatment-card__visual {
   position: relative; aspect-ratio: 4 / 5; overflow: hidden;
   display: flex; align-items: flex-end; justify-content: flex-start;
@@ -698,7 +698,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 
 @media (min-width: 640px) { .contouring__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px) {
-  .contouring { padding: 6rem 0; }
+  .contouring { padding: 4rem 0; }
   .contouring__grid { grid-template-columns: repeat(3, 1fr); }
   .treatment-card__visual { aspect-ratio: 3 / 4; }
 }
@@ -729,7 +729,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 ============================================================================= */
 .results { background: var(--ivory-100); padding: 3rem 0; }
 .results__carousel { margin-top: 2rem; max-width: 34rem; margin-left: auto; margin-right: auto; }
-@media (min-width: 1024px) { .results { padding: 5rem 0; } .results__carousel { max-width: 56rem; } }
+@media (min-width: 1024px) { .results__carousel { max-width: 56rem; } }
 
 /* ---- Nav: prev arrow / dot indicators / next arrow ---- */
 .results__nav { display: flex; align-items: center; justify-content: center; gap: 1rem; }
@@ -760,10 +760,12 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .results__slide { display: none; }
 .results__slide.is-active { display: block; }
 .results__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+/* Restrained radius, no shadow — documentary/clinical proof imagery, not a
+   floating social-media card. */
 .results__shot {
-  position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 1rem;
+  position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 0.35rem;
   background: linear-gradient(160deg, var(--ivory-200), var(--sage-100));
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--forest-100);
 }
 .results__shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 .results__shot-label {
@@ -785,7 +787,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 
 .results__info {
   margin-top: 1rem; text-align: center; background: #fff; border: 1px solid var(--forest-100);
-  border-radius: 1rem; padding: 1.25rem 1.4rem; box-shadow: var(--shadow-card);
+  border-radius: 0.6rem; padding: 1.25rem 1.4rem;
 }
 .results__info h3 { font-size: 1.3rem; }
 .results__info p { margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.6; color: var(--forest-600); max-width: 30rem; margin-left: auto; margin-right: auto; }
@@ -838,30 +840,30 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .tech__index-body h3 { font-size: 1.05rem; }
 .tech__index-body p { margin-top: 0.25rem; font-size: 0.85rem; line-height: 1.5; color: var(--forest-600); }
 
-@media (min-width: 1024px) { .tech { padding: 6rem 0; } }
+@media (min-width: 1024px) { .tech { padding: 4rem 0; } }
 
 /* =============================================================================
    TESTIMONIALS
 ============================================================================= */
-.testimonials { background: var(--ivory-100); padding: 4rem 0; }
+.testimonials { background: var(--ivory-100); padding: 3rem 0; }
 .testimonials__rating { margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; font-size: 0.9rem; font-weight: 700; color: var(--forest-700); }
 /* A compact real-numbers strip — same "let the numbers do the talking"
    pattern common to conversion-focused sections, built from data already
    stated elsewhere on the site (config.js), never invented for this. */
-.stats-strip { margin-top: 1.25rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
+.stats-strip { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
 .stats-strip__item {
   display: flex; align-items: baseline; gap: 0.4rem; padding: 0.6rem 1.1rem;
   border: 1px solid var(--forest-100); border-radius: 999px; background: #fff;
 }
 .stats-strip__num { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: var(--brand-green); }
 .stats-strip__label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--forest-500); }
-.testimonials__layout { margin-top: 3rem; }
+.testimonials__layout { margin-top: 1.75rem; }
 .testimonial-card {
   position: relative; overflow: hidden; display: flex; flex-direction: column;
-  border-radius: 1.1rem; border: 1px solid var(--forest-100); background: #fff; padding: 1.5rem; box-shadow: var(--shadow-card);
+  border-radius: 1rem; border: 1px solid var(--forest-100); background: #fff; padding: 1.25rem;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-.testimonial-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+.testimonial-card:hover { box-shadow: var(--shadow-card); transform: translateY(-2px); }
 .testimonial-card::before {
   content: "\201C"; position: absolute; top: -1.25rem; right: 0.75rem; font-family: var(--font-serif);
   font-size: 6rem; line-height: 1; color: var(--forest-100); z-index: 0; pointer-events: none;
@@ -889,7 +891,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    brand-green, big serif quote — not a smaller card with a coloured border.
    It's meant to stop the scroll before the supporting grid reads as proof. */
 .testimonial-card--featured {
-  background: var(--brand-green); border-color: var(--brand-green); padding: 2rem;
+  background: var(--brand-green); border-color: var(--brand-green); padding: 1.5rem;
 }
 .testimonial-card--featured::before { color: rgba(255, 255, 255, 0.1); }
 .testimonial-card--featured .stars { color: var(--bronze); }
@@ -909,18 +911,18 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   .testimonial-card--featured .testimonial-quote { font-size: 1.5rem; }
 }
 @media (min-width: 1024px) {
-  .testimonials { padding: 6rem 0; }
+  .testimonials { padding: 4rem 0; }
   .testimonials__grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* =============================================================================
    REELS
 ============================================================================= */
-.reels { background: var(--ivory-100); padding: 4rem 0; }
+.reels { background: var(--ivory-100); padding: 3rem 0; }
 
 /* ---------- Phone-mockup grid ---------- */
 .phone-mockup-grid {
-  margin-top: 3rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;
+  margin-top: 2.25rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;
 }
 .phone-mockup {
   background: none; border: none; padding: 0; cursor: pointer; text-align: left;
@@ -965,7 +967,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .reel-lightbox video { width: 100%; height: 100%; border-radius: 1rem; background: #000; }
 .reel-lightbox__close { position: absolute; top: -2.5rem; right: 0; background: none; border: none; color: #fff; font-weight: 700; font-size: 0.9rem; }
 
-@media (min-width: 1024px) { .reels { padding: 6rem 0; } }
+@media (min-width: 1024px) { .reels { padding: 4rem 0; } }
 
 /* =============================================================================
    WHY GLOSSARY
@@ -1062,47 +1064,38 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 /* =============================================================================
    FAQ
 ============================================================================= */
-.faq { background: var(--ivory-100); padding: 4rem 0; }
+.faq { background: var(--ivory-100); padding: 3rem 0; }
 .faq__intro { max-width: 34rem; }
 .faq__reviewed {
   margin-top: 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--forest-500);
   text-transform: uppercase; letter-spacing: 0.06em;
 }
-.faq__list { margin-top: 2.5rem; border-radius: 1.1rem; border: 1px solid var(--forest-100); background: #fff; overflow: hidden; display: flex; flex-direction: column; gap: 0.6rem; padding: 0.6rem; }
-/* White by default, green only on hover/open — the pill fills with brand
-   green and the text flips to white as a visitor's cursor lands on it. */
-.faq__item { border-radius: 0.85rem; overflow: hidden; background: transparent; }
+/* Flat editorial list — a single top rule and a divider between items, not
+   a bordered card wrapping another bordered card per item. */
+.faq__list { margin-top: 1.75rem; border-top: 1px solid var(--forest-100); }
+.faq__item { border-bottom: 1px solid var(--forest-100); }
 .faq__item summary {
   cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  font-family: var(--font-serif); font-size: 1rem; color: var(--forest-900); background: #fff;
-  border: 1px solid var(--forest-100); padding: 1.1rem 1.25rem; border-radius: 0.85rem;
-  transition: background 0.2s ease, color 0.2s ease, border-radius 0.2s ease;
+  font-family: var(--font-serif); font-size: 0.98rem; color: var(--forest-900);
+  padding: 0.9rem 0.35rem; transition: color 0.2s ease;
 }
-.faq__item[open] summary { border-radius: 0.85rem 0.85rem 0 0; }
-.faq__item:hover summary, .faq__item[open] summary {
-  background: var(--brand-green); color: #fff; border-color: var(--brand-green);
-}
+.faq__item:hover summary, .faq__item[open] summary { color: var(--brand-green); }
 .faq__item summary::-webkit-details-marker { display: none; }
 .faq__item summary::after {
-  content: "+"; flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 999px;
+  content: "+"; flex-shrink: 0; width: 1.4rem; height: 1.4rem; border-radius: 999px;
   border: 1px solid var(--forest-200); display: flex; align-items: center; justify-content: center;
-  font-size: 1rem; color: var(--forest-700); transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  font-size: 0.9rem; color: var(--forest-700); transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
-.faq__item:hover summary::after, .faq__item[open] summary::after {
-  border-color: rgba(255, 255, 255, 0.5); color: #fff;
-}
-.faq__item[open] summary::after { transform: rotate(45deg); background: #fff; color: var(--brand-green); border-color: #fff; }
-.faq__q { display: flex; align-items: center; gap: 0.9rem; }
+.faq__item:hover summary::after { border-color: var(--brand-green); color: var(--brand-green); }
+.faq__item[open] summary::after { transform: rotate(45deg); background: var(--brand-green); color: #fff; border-color: var(--brand-green); }
+.faq__q { display: flex; align-items: center; gap: 0.75rem; }
 .faq__num {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
-  width: 1.9rem; height: 1.9rem; border-radius: 999px; background: var(--forest-100);
-  font-family: var(--font-sans); font-size: 0.72rem; font-weight: 700; color: var(--brand-green);
-  transition: background 0.2s ease, color 0.2s ease;
+  width: 1.7rem; height: 1.7rem; border-radius: 999px; background: var(--forest-100);
+  font-family: var(--font-sans); font-size: 0.68rem; font-weight: 700; color: var(--brand-green);
 }
-.faq__item:hover .faq__num, .faq__item[open] .faq__num { background: rgba(255, 255, 255, 0.18); color: #fff; }
-.faq__item p { margin: 0.85rem 1.25rem 0; font-size: 0.88rem; line-height: 1.65; color: var(--forest-700); }
-.faq__item > :last-child { margin-bottom: 1.1rem; }
-.faq__bullets { list-style: none; margin: 0.85rem 1.25rem 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.faq__item p { margin: 0 0.35rem 0.9rem; font-size: 0.86rem; line-height: 1.6; color: var(--forest-600); max-width: 40rem; }
+.faq__bullets { list-style: none; margin: 0 0.35rem 0.9rem; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
 .faq__bullets li { position: relative; padding-left: 1.1rem; font-size: 0.88rem; line-height: 1.5; color: var(--forest-700); }
 .faq__bullets li::before { content: ""; position: absolute; left: 0; top: 0.55rem; width: 0.35rem; height: 0.35rem; border-radius: 999px; background: var(--bronze); }
 .faq__bullets--inline { flex-direction: row; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
@@ -1134,7 +1127,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   .faq__list { margin-top: 0; }
   .faq__cta-block { grid-column: 1 / -1; }
 }
-@media (min-width: 1024px) { .faq { padding: 6rem 0; } }
+@media (min-width: 1024px) { .faq { padding: 4rem 0; } }
 
 /* =============================================================================
    FINAL CTA
@@ -1170,7 +1163,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   .final-cta { padding: 0; }
   .final-cta__layout {
     display: grid; grid-template-columns: 1.15fr 0.85fr; align-items: center; gap: 3rem;
-    text-align: left; padding: 6rem 0;
+    text-align: left; padding: 4.5rem 0;
   }
   .final-cta__content > p { margin-left: 0; margin-right: 0; }
   .final-cta__actions { justify-content: flex-start; }
