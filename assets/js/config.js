@@ -173,6 +173,12 @@ const RESULTS_JOURNEYS = [
     before: "assets/img/results-hips-before.webp",
     after: "assets/img/results-hips-after.webp",
     avatar: "assets/img/results-hips-avatar.webp",
+    // Reused verbatim from TESTIMONIALS (already tagged "Hips Inch Loss" and
+    // client-approved there) — shown as "what a client said about this
+    // treatment," never captioned as if it names the person photographed,
+    // since that pairing was never confirmed.
+    quote: "I came in specifically for my hips and liked how clearly everything was explained. The treatment itself was relaxing, and the team was attentive throughout.",
+    quoteName: "Aishwarya Kulkarni",
   },
   {
     id: "thighs",
@@ -183,6 +189,8 @@ const RESULTS_JOURNEYS = [
     before: "assets/img/results-thighs-before.webp",
     after: "assets/img/results-thighs-after.webp",
     avatar: "assets/img/results-thighs-avatar.webp",
+    quote: "The biggest difference for me was the overall experience. From the initial consultation to the treatment sessions, everyone was patient and explained what they were doing.",
+    quoteName: "Sahana Iyer",
   },
 ];
 

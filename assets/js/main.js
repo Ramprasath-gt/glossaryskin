@@ -227,7 +227,7 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
 
     const fraction = (weight - min) / (max - min);
     if (dialFill) dialFill.style.strokeDashoffset = String(dialLength * (1 - fraction));
-    if (needle) needle.style.transform = `rotate(${-90 + fraction * 180}deg)`;
+    if (needle) needle.style.transform = `rotate(${-125 + fraction * 250}deg)`;
 
     const heightM = heightCm / 100;
     const bmi = weight / (heightM * heightM);
@@ -275,12 +275,21 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
         <p>Verified before-and-after photos for ${j.treatment} are being added.</p>
       </div>`;
 
+    const quote = j.quote
+      ? `
+      <blockquote class="results__quote">
+        <p>&ldquo;${j.quote}&rdquo;</p>
+        <cite>— ${j.quoteName}, ${j.treatment} client</cite>
+      </blockquote>`
+      : "";
+
     return `
     <div class="results__slide" data-id="${j.id}">
       ${media}
       <div class="results__info">
         <h3>${j.treatment}</h3>
         <p>${j.description}</p>
+        ${quote}
         <button class="btn btn--primary btn--md" data-open-booking data-program="${j.program}" data-source="results_${j.id}">Explore My Treatment Options</button>
       </div>
     </div>`;

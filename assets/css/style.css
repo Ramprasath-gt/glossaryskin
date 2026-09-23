@@ -576,12 +576,12 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 /* ---- Gauge: decorative dial that tracks the slider, no predicted value.
    The reading sits BELOW the dial (not overlaid on the pivot) so the needle
    never sweeps through the number at the min/max ends of the range. ---- */
-.calculator__gauge { max-width: 15rem; margin: 0.75rem auto 0; }
+.calculator__gauge { max-width: 17rem; margin: 0.75rem auto 0; }
 .calculator__dial { display: block; width: 100%; height: auto; }
 #calcDialFill { transition: stroke-dashoffset 0.15s ease; }
 #calcNeedle { transition: transform 0.15s ease; }
 .calculator__reading {
-  display: flex; align-items: baseline; justify-content: center; gap: 0.25rem; margin-top: -0.5rem;
+  display: flex; align-items: baseline; justify-content: center; gap: 0.25rem; margin-top: 0.35rem;
   font-family: var(--font-serif); font-size: 2.1rem; font-weight: 700; color: var(--forest-900);
 }
 .calculator__reading-unit { font-family: var(--font-sans); font-size: 0.95rem; font-weight: 700; color: var(--forest-500); }
@@ -729,6 +729,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 ============================================================================= */
 .results { background: var(--ivory-100); padding: 3rem 0; }
 .results__carousel { margin-top: 2rem; max-width: 34rem; margin-left: auto; margin-right: auto; }
+@media (min-width: 1024px) { .results { padding: 5rem 0; } .results__carousel { max-width: 56rem; } }
 
 /* ---- Nav: prev arrow / dot indicators / next arrow ---- */
 .results__nav { display: flex; align-items: center; justify-content: center; gap: 1rem; }
@@ -789,6 +790,24 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .results__info h3 { font-size: 1.3rem; }
 .results__info p { margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.6; color: var(--forest-600); max-width: 30rem; margin-left: auto; margin-right: auto; }
 .results__info .btn { margin-top: 1.1rem; }
+
+/* A real client's own words about this treatment — reused from
+   TESTIMONIALS, never claimed to caption the photographed person. */
+.results__quote {
+  margin: 1.1rem auto 0; padding: 1rem 1.1rem; max-width: 28rem; text-align: left;
+  background: var(--sage-100); border-left: 3px solid var(--brand-green); border-radius: 0 0.6rem 0.6rem 0;
+}
+.results__quote p { margin: 0; font-size: 0.88rem; line-height: 1.55; color: var(--forest-700); font-style: italic; }
+.results__quote cite { display: block; margin-top: 0.5rem; font-size: 0.74rem; font-style: normal; font-weight: 700; color: var(--forest-500); }
+
+@media (min-width: 1024px) {
+  .results__slide.is-active { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+  .results__info { margin-top: 0; text-align: left; padding: 2rem; }
+  .results__info p { margin-left: 0; margin-right: 0; }
+  .results__quote { margin-left: 0; margin-right: 0; }
+  .results__pair { gap: 1rem; }
+  .results__shot { aspect-ratio: 3 / 4; }
+}
 
 .results__disclaimer {
   margin: 2rem auto 0; max-width: 38rem; text-align: center; font-size: 0.74rem; line-height: 1.6; color: var(--forest-400);
