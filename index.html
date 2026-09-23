@@ -314,12 +314,14 @@
 ========================================================== -->
 <section class="calculator" id="calculator">
   <div class="container">
-    <div class="calculator__card reveal calculator__layout">
-      <div class="calculator__intro">
+    <div class="calculator__card reveal">
+      <div class="section-head section-head--center calculator__head">
         <span class="section-tag">Weight Management</span>
         <h2>Explore Your Weight-Management Goal</h2>
-        <p>Enter your current weight and height to see your BMI and how a personalised Glossary plan could apply to you.</p>
+      </div>
 
+      <div class="calculator__layout">
+      <div class="calculator__intro">
         <label for="calcWeight" class="calculator__label">Choose Your Current Weight</label>
 
         <div class="calculator__gauge">
@@ -375,18 +377,18 @@
 
         <input type="range" id="calcWeight" min="40" max="150" value="70" step="1" aria-label="Current weight in kilograms" class="calculator__slider" />
 
-        <div class="calculator__field-compact">
-          <div class="calculator__field-compact-top">
-            <label for="calcHeight">Height</label>
-            <span><span id="calcHeightValue">165</span> cm</span>
-          </div>
+        <div class="calculator__height-inline">
+          <label for="calcHeight">Height: <strong><span id="calcHeightValue">165</span> cm</strong></label>
           <input type="range" id="calcHeight" min="140" max="200" value="165" step="1" aria-label="Height in centimetres" class="calculator__slider calculator__slider--compact" />
         </div>
       </div>
 
       <div class="calculator__outcome">
         <div class="calculator__result">
-          <span class="calculator__result-label">Your Result</span>
+          <div class="calculator__result-row">
+            <span>Current Weight</span>
+            <strong><span id="calcWeightEcho">70</span> kg</strong>
+          </div>
           <div class="calculator__result-row">
             <span>Your BMI</span>
             <span class="calculator__bmi-readout">
@@ -394,11 +396,11 @@
               <span class="calculator__bmi-tag" id="calcBmiTag">Overweight</span>
             </span>
           </div>
-          <p class="calculator__result-text">BMI is a general screening measure, not a diagnosis. A personalised weight-management range is determined after your medical consultation — not before.</p>
         </div>
 
         <button class="btn btn--primary btn--md full-width" data-open-booking data-program="glp1" data-source="calculator_section">Discuss My Options</button>
-        <p class="calculator__disclaimer">Illustrative estimate only. Individual results vary and depend on clinical assessment, treatment suitability and other factors. This does not guarantee weight loss.</p>
+        <p class="calculator__disclaimer">Your BMI is a general reference only, not a diagnosis. Illustrative estimate — individual results vary and depend on clinical assessment. This does not guarantee weight loss.</p>
+      </div>
       </div>
     </div>
   </div>
@@ -499,19 +501,7 @@
       <p>See how personalised treatment journeys can look across different body-contouring goals.</p>
     </div>
 
-    <div class="results__carousel reveal">
-      <div class="results__nav">
-        <button type="button" class="results__arrow" id="resultsPrev" aria-label="Previous treatment journey">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <div class="results__dots" id="resultsDots"><!-- injected by main.js --></div>
-        <button type="button" class="results__arrow" id="resultsNext" aria-label="Next treatment journey">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-
-      <div class="results__stage" id="resultsStage"><!-- injected by main.js --></div>
-    </div>
+    <div class="results__grid" id="resultsGrid"><!-- injected by main.js: one card per journey, all shown at once --></div>
 
     <p class="results__disclaimer reveal">Individual results vary. Before-and-after images represent individual treatment journeys and are not a guarantee of similar results.</p>
   </div>

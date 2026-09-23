@@ -201,6 +201,7 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
   const heightSlider = document.getElementById("calcHeight");
   if (!weightSlider || !heightSlider) return;
   const valueEl = document.getElementById("calcWeightValue");
+  const echoEl = document.getElementById("calcWeightEcho");
   const heightValueEl = document.getElementById("calcHeightValue");
   const bmiValueEl = document.getElementById("calcBmiValue");
   const bmiTagEl = document.getElementById("calcBmiTag");
@@ -223,6 +224,7 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
     const weight = Number(weightSlider.value);
     const heightCm = Number(heightSlider.value);
     valueEl.textContent = weightSlider.value;
+    if (echoEl) echoEl.textContent = weightSlider.value;
     heightValueEl.textContent = heightSlider.value;
 
     const fraction = (weight - min) / (max - min);
@@ -240,22 +242,18 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
 })();
 
 /* -----------------------------------------------------------------------
-   RENDER: REAL TREATMENT JOURNEYS (before/after carousel)
+   RENDER: REAL TREATMENT JOURNEYS (before/after grid)
 ------------------------------------------------------------------------ */
-// One journey visible at a time — a visitor evaluating proof shouldn't have
-// to scroll past several large image pairs, and this keeps mobile (the
-// majority of ad traffic) to one clear comparison per view. Arrows and dots
-// call the same setActive() as touch swipe. Journeys with no verified
+// All journeys shown at once, side by side — no picker/carousel interaction
+// standing between the visitor and the proof. Journeys with no verified
 // before/after pair yet (see RESULTS_JOURNEYS in config.js) render as an
-// honest "coming soon" panel — never a stock or mismatched photo.
-(function renderResultsCarousel() {
-  const dotsEl = document.getElementById("resultsDots");
-  const stageEl = document.getElementById("resultsStage");
-  const prevBtn = document.getElementById("resultsPrev");
-  const nextBtn = document.getElementById("resultsNext");
-  if (!dotsEl || !stageEl || typeof RESULTS_JOURNEYS === "undefined" || RESULTS_JOURNEYS.length === 0) return;
+// honest "coming soon" placeholder in the same grid slot — never a stock
+// or mismatched photo.
+(function renderResultsGrid() {
+  const gridEl = document.getElementById("resultsGrid");
+  if (!gridEl || typeof RESULTS_JOURNEYS === "undefined" || RESULTS_JOURNEYS.length === 0) return;
 
-  function slideMarkup(j) {
+  function cardMarkup(j) {
     const media =
       j.before && j.after
         ? `
@@ -272,71 +270,25 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
         : `
       <div class="results__pending">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 16l-5-4-4 3-3-2-6 5"/></svg>
-        <p>Verified before-and-after photos for ${j.treatment} are being added.</p>
+        <p>Verified photos coming soon</p>
       </div>`;
 
     const quote = j.quote
-      ? `
-      <blockquote class="results__quote">
-        <p>&ldquo;${j.quote}&rdquo;</p>
-        <cite>— ${j.quoteName}, ${j.treatment} client</cite>
-      </blockquote>`
+      ? `<p class="results__quote">&ldquo;${j.quote}&rdquo;<span>— ${j.quoteName}, ${j.treatment} client</span></p>`
       : "";
 
     return `
-    <div class="results__slide" data-id="${j.id}">
+    <div class="results__card" data-id="${j.id}">
       ${media}
       <div class="results__info">
         <h3>${j.treatment}</h3>
-        <p>${j.description}</p>
         ${quote}
-        <button class="btn btn--primary btn--md" data-open-booking data-program="${j.program}" data-source="results_${j.id}">Explore My Treatment Options</button>
+        <button class="btn btn--secondary btn--md" data-open-booking data-program="${j.program}" data-source="results_${j.id}">Explore My Treatment Options</button>
       </div>
     </div>`;
   }
 
-  stageEl.innerHTML = RESULTS_JOURNEYS.map(slideMarkup).join("");
-  dotsEl.innerHTML = RESULTS_JOURNEYS.map(
-    (j, i) => `
-    <button type="button" class="results__dot" data-index="${i}" aria-label="Show ${j.area} treatment journey">
-      ${j.avatar ? `<img src="${j.avatar}" alt="" loading="lazy" decoding="async" />` : `<span class="results__dot-fallback">${j.area.slice(0, 1)}</span>`}
-    </button>`
-  ).join("");
-
-  const slides = Array.from(stageEl.querySelectorAll(".results__slide"));
-  const dots = Array.from(dotsEl.querySelectorAll(".results__dot"));
-
-  // Default to the first journey that actually has real photos — a
-  // visitor's first impression of this section should be real proof,
-  // not a "coming soon" panel, even though Abdomen sorts first in the list.
-  let activeIndex = RESULTS_JOURNEYS.findIndex((j) => j.before && j.after);
-  if (activeIndex === -1) activeIndex = 0;
-
-  function setActive(index) {
-    activeIndex = (index + slides.length) % slides.length;
-    slides.forEach((s, i) => s.classList.toggle("is-active", i === activeIndex));
-    dots.forEach((d, i) => d.classList.toggle("is-active", i === activeIndex));
-  }
-  setActive(activeIndex);
-
-  prevBtn.addEventListener("click", () => setActive(activeIndex - 1));
-  nextBtn.addEventListener("click", () => setActive(activeIndex + 1));
-  dots.forEach((d) => d.addEventListener("click", () => setActive(Number(d.dataset.index))));
-
-  // Touch swipe (left = next, right = prev) — a threshold-based commit on
-  // release, no drag-following animation, so it can't fight page scroll.
-  let touchStartX = null;
-  stageEl.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  stageEl.addEventListener(
-    "touchend",
-    (e) => {
-      if (touchStartX === null) return;
-      const delta = e.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(delta) > 40) setActive(activeIndex + (delta < 0 ? 1 : -1));
-      touchStartX = null;
-    },
-    { passive: true }
-  );
+  gridEl.innerHTML = RESULTS_JOURNEYS.map(cardMarkup).join("");
 })();
 
 /* -----------------------------------------------------------------------
