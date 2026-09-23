@@ -224,82 +224,49 @@
 </section>
 
 <!-- =========================================================
-     PROBLEM
+     WHAT ARE YOU LOOKING TO ACHIEVE? — replaces two back-to-back "which
+     path are you on" sections (a 3-card generic framing, then a separate
+     2-card GLP-1/Body-Contouring split) with ONE premium selector matching
+     the five Meta ad intents 1:1. Clicking a card scrolls straight to that
+     service; "Not Sure" opens the booking modal instead.
 ========================================================== -->
-<section class="problem">
+<section class="goal-select" id="programs">
   <div class="container">
     <div class="section-head reveal">
-      <span class="section-tag section-tag--light">Your Goal Is Personal</span>
-      <h2>Because Weight Isn't the Only Thing That Matters.</h2>
-      <p>Sometimes the goal is managing your weight. Sometimes it's stubborn inches that continue to concern you. And sometimes, you simply want professional guidance on where to begin.</p>
-      <p>Whatever brought you here, the first step is understanding what approach may be right for you.</p>
+      <span class="section-tag section-tag--light">Where Do You Want to Start?</span>
+      <h2>What Are You Looking to Achieve?</h2>
+      <p>Choose the option closest to your goal — you don't need to be certain before you enquire.</p>
     </div>
 
-    <div class="problem__grid">
-      <div class="problem__card reveal">
-        <div class="problem__top">
-          <span class="problem__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5 6 4-14L16 12h5"/></svg></span>
-          <span class="problem__num">01</span>
-        </div>
-        <h3>Weight Management</h3><p>You want a structured approach to managing your weight with professional and medical guidance.</p>
-      </div>
-      <div class="problem__card reveal">
-        <div class="problem__top">
-          <span class="problem__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></span>
-          <span class="problem__num">02</span>
-        </div>
-        <h3>Stubborn Inches</h3><p>You want to focus on specific areas such as the abdomen, hips or thighs.</p>
-      </div>
-      <div class="problem__card reveal">
-        <div class="problem__top">
-          <span class="problem__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.2a2.8 2.8 0 1 1 3.8 2.6c-.8.3-1.4 1-1.4 1.9v.3"/><circle cx="12" cy="16.5" r=".6" fill="currentColor" stroke="none"/></svg></span>
-          <span class="problem__num">03</span>
-        </div>
-        <h3>Not Sure Where to Start?</h3><p>You don't have to choose a treatment on your own. Start with a consultation and explore your options.</p>
-      </div>
+    <div class="goal-select__grid">
+      <a href="#glp1" class="goal-select__card reveal" data-track-nav="glp1">
+        <span class="goal-select__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a4 4 0 0 0 8 0V3M10 13v3a5 5 0 0 0 10 0v-2a3 3 0 1 0-3-3"/></svg></span>
+        <h3>GLP-1 Weight Management</h3>
+        <p>Doctor-guided weight management</p>
+      </a>
+      <a href="#abdomen" class="goal-select__card reveal" data-track-nav="abdomen">
+        <span class="goal-select__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></span>
+        <h3>Abdomen</h3>
+        <p>Targeted body contouring</p>
+      </a>
+      <a href="#hips" class="goal-select__card reveal" data-track-nav="hips">
+        <span class="goal-select__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></span>
+        <h3>Hips</h3>
+        <p>Targeted body contouring</p>
+      </a>
+      <a href="#thighs" class="goal-select__card reveal" data-track-nav="thighs">
+        <span class="goal-select__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></span>
+        <h3>Thighs</h3>
+        <p>Targeted body contouring</p>
+      </a>
+      <button type="button" class="goal-select__card goal-select__card--unsure reveal" data-open-booking data-source="goal_select_unsure" data-track-nav="unsure">
+        <span class="goal-select__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.2a2.8 2.8 0 1 1 3.8 2.6c-.8.3-1.4 1-1.4 1.9v.3"/><circle cx="12" cy="16.5" r=".6" fill="currentColor" stroke="none"/></svg></span>
+        <h3>Not Sure</h3>
+        <p>Help me find the right approach</p>
+      </button>
     </div>
 
-    <div class="center-cta reveal">
-      <button class="btn btn--primary btn--md" data-open-booking data-source="problem_section">Find the Right Approach for Me</button>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================
-     TWO CLEAR PATHS
-========================================================== -->
-<section class="paths" id="programs">
-  <div class="container">
-    <div class="section-head section-head--center reveal">
-      <span class="section-tag">Where Do You Want to Start?</span>
-      <h2>Your Goal. Your Starting Point.</h2>
-    </div>
-
-    <div class="paths__grid">
-      <div class="paths__card reveal">
-        <div class="paths__top">
-          <span class="paths__num">01</span>
-          <span class="paths__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a4 4 0 0 0 8 0V3M10 13v3a5 5 0 0 0 10 0v-2a3 3 0 1 0-3-3"/></svg></span>
-        </div>
-        <span class="paths__tag">Weight Management</span>
-        <h3>Doctor-Guided GLP-1 Weight Management</h3>
-        <p>For those exploring a structured approach to weight management with medical guidance, appropriate assessment, nutrition support and ongoing monitoring.</p>
-        <a href="#glp1" class="btn btn--primary btn--md">Explore GLP-1</a>
-      </div>
-      <div class="paths__card reveal">
-        <div class="paths__top">
-          <span class="paths__num">02</span>
-          <span class="paths__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></span>
-        </div>
-        <span class="paths__tag">Body Contouring</span>
-        <h3>Targeted Inch-Loss Treatments</h3>
-        <p class="paths__areas">Abdomen &middot; Hips &middot; Thighs</p>
-        <p>Non-invasive, area-specific treatments for those looking to focus on the abdomen, hips or thighs.</p>
-        <a href="#body-contouring" class="btn btn--primary btn--md">Explore Body Contouring</a>
-      </div>
-    </div>
-
-    <p class="paths__footnote reveal">One brand, both approaches — GLP-1 &middot; Abdomen &middot; Hips &middot; Thighs. You don't need to know which one is right before you enquire.</p>
+    <p class="goal-select__footnote reveal">One brand, both approaches — GLP-1 &middot; Abdomen &middot; Hips &middot; Thighs. You don't need to know which one is right before you enquire.</p>
   </div>
 </section>
 
@@ -555,56 +522,34 @@
 </section>
 
 <!-- =========================================================
-     TRUST BADGES
+     WHY GLOSSARY / TRUST — merged from two back-to-back sections that
+     repeated the same "personalised / clinically guided" claims (a photo
+     badge grid, then a separate editorial points block). One section now:
+     real photos first, then the supporting points as editorial rows.
 ========================================================== -->
-<section class="trust-badges">
+<section class="trust-badges" id="why-glossary">
   <div class="container">
     <div class="section-head section-head--center reveal">
-      <span class="section-tag">Why Clients Choose Glossary</span>
+      <span class="section-tag">Why Glossary</span>
       <h2>Doctor-Led Care, Delivered With Real Consistency.</h2>
+      <p>Whether you're exploring weight management or targeted body contouring, Glossary brings together professional guidance, personalised care and a premium experience designed around you.</p>
     </div>
     <div class="trust-badges__layout" id="trustBadgesGrid"><!-- injected by main.js --></div>
-  </div>
-</section>
 
-<!-- =========================================================
-     WHY GLOSSARY
-========================================================== -->
-<section class="why" id="why-glossary">
-  <div class="container why__layout">
-    <div class="why__visual reveal">
-      <img
-        src="assets/img/trust-medical-supervision.webp"
-        alt="Doctor-guided consultation at Glossary"
-        loading="lazy"
-        decoding="async"
-        onload="this.classList.add('is-loaded')"
-        onerror="this.remove()"
-      />
-    </div>
-
-    <div class="why__content">
-      <div class="section-head reveal">
-        <span class="section-tag">Why Glossary</span>
-        <h2>More Than a Treatment. A Better-Care Experience.</h2>
-        <p>Whether you're exploring weight management or targeted body contouring, Glossary brings together professional guidance, personalised care and a premium experience designed around you.</p>
-      </div>
-
-      <ul class="why__points">
-        <li class="reveal">
-          <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4-5.5 7-5.5s5.5 1.5 7 5.5"/></svg></span>
-          <div><h3>Personalised</h3><p>Your approach is shaped around your individual goals — not a one-size-fits-all protocol.</p></div>
-        </li>
-        <li class="reveal">
-          <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 13l2 2 4-4"/></svg></span>
-          <div><h3>Clinically Guided</h3><p>GLP-1 suitability is assessed by a medical professional before any prescription-based protocol is started, with clear next steps at every stage.</p></div>
-        </li>
-        <li class="reveal">
-          <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 0 0-14 0c0 4.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-          <div><h3>Targeted</h3><p>Body-contouring services are area-specific, so you can focus on the abdomen, hips or thighs individually.</p></div>
-        </li>
-      </ul>
-    </div>
+    <ul class="why__points">
+      <li class="reveal">
+        <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4-5.5 7-5.5s5.5 1.5 7 5.5"/></svg></span>
+        <div><h3>Personalised</h3><p>Your approach is shaped around your individual goals — not a one-size-fits-all protocol.</p></div>
+      </li>
+      <li class="reveal">
+        <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 13l2 2 4-4"/></svg></span>
+        <div><h3>Clinically Guided</h3><p>GLP-1 suitability is assessed by a medical professional before any prescription-based protocol is started, with clear next steps at every stage.</p></div>
+      </li>
+      <li class="reveal">
+        <span class="why__point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 0 0-14 0c0 4.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+        <div><h3>Targeted</h3><p>Body-contouring services are area-specific, so you can focus on the abdomen, hips or thighs individually.</p></div>
+      </li>
+    </ul>
   </div>
 </section>
 

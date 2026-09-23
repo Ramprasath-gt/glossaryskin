@@ -446,35 +446,42 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 /* =============================================================================
    PROBLEM
 ============================================================================= */
-.problem { position: relative; overflow: hidden; background: var(--forest-950); padding: 4rem 0; }
-.problem::before {
+/* =============================================================================
+   WHAT ARE YOU LOOKING TO ACHIEVE? (goal selector — replaces the old
+   "problem" 3-card + "paths" 2-card sections with one 5-option selector)
+============================================================================= */
+.goal-select { position: relative; overflow: hidden; background: var(--forest-950); padding: 4rem 0; }
+.goal-select::before {
   content: ""; position: absolute; top: -8rem; left: 50%; transform: translateX(-50%);
   width: 34rem; height: 34rem; border-radius: 50%; background: var(--forest-500);
   opacity: 0.25; filter: blur(90px); pointer-events: none;
 }
-.problem .container { position: relative; }
-/* The shared .section-head h2/p rules default to dark text for light
-   backgrounds — this section's near-black background needs light text
-   instead, which was never overridden (only the individual cards below
-   got a light-text treatment), leaving the heading and intro paragraph
-   near-invisible dark-on-dark. */
-.problem .section-head h2 { color: var(--ivory-50); }
-.problem .section-head p { color: var(--forest-200); }
-.problem__grid { margin-top: 3rem; display: grid; gap: 1rem; }
-.problem__card { border-radius: 1.1rem; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); padding: 1.5rem; transition: background 0.2s ease, transform 0.25s ease; }
-.problem__card:hover { background: rgba(255,255,255,0.08); transform: translateY(-3px); }
-.problem__top { display: flex; align-items: center; justify-content: space-between; }
-.problem__icon {
+.goal-select .container { position: relative; }
+.goal-select .section-head h2 { color: var(--ivory-50); }
+.goal-select .section-head p { color: var(--forest-200); }
+.goal-select__grid { margin-top: 3rem; display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+.goal-select__card {
+  display: block; text-align: left; font: inherit; cursor: pointer;
+  border-radius: 1.1rem; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+  padding: 1.5rem; transition: background 0.2s ease, transform 0.25s ease;
+}
+.goal-select__card:hover { background: rgba(255,255,255,0.08); transform: translateY(-3px); }
+.goal-select__card.is-active { border-color: var(--brand-green); background: rgba(255,255,255,0.09); }
+.goal-select__card.is-active .goal-select__icon { background: var(--brand-green); color: #fff; }
+.goal-select__icon {
   display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem;
   border-radius: 999px; background: rgba(255, 255, 255, 0.08); color: var(--ivory-50);
 }
-.problem__icon svg { width: 1.3rem; height: 1.3rem; }
-.problem__num { font-family: var(--font-serif); font-size: 1.8rem; color: var(--bronze); }
-.problem__card h3 { margin-top: 1rem; font-size: 1.05rem; color: var(--ivory-50); }
-.problem__card p { margin-top: 0.5rem; font-size: 0.88rem; line-height: 1.6; color: var(--forest-200); }
+.goal-select__icon svg { width: 1.3rem; height: 1.3rem; }
+.goal-select__card h3 { margin-top: 1rem; font-size: 1rem; color: var(--ivory-50); }
+.goal-select__card p { margin-top: 0.4rem; font-size: 0.82rem; line-height: 1.5; color: var(--forest-200); }
+.goal-select__footnote { margin-top: 2.5rem; text-align: center; font-size: 0.85rem; color: var(--forest-300); }
 
-@media (min-width: 640px) { .problem__grid { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1024px) { .problem { padding: 6rem 0; } .problem__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 640px) { .goal-select__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) {
+  .goal-select { padding: 6rem 0; }
+  .goal-select__grid { grid-template-columns: repeat(5, 1fr); }
+}
 
 /* =============================================================================
    APPROACH
@@ -508,35 +515,6 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   .approach__card { position: relative; z-index: 1; }
 }
 
-/* =============================================================================
-   TWO CLEAR PATHS
-============================================================================= */
-.paths { background: var(--ivory-100); padding: 4rem 0; }
-.paths__grid { margin-top: 3rem; display: grid; gap: 1.25rem; }
-/* Editorial, not card-website: no default shadow/border-heavy chrome — a
-   large bronze numeral and a hairline top-rule carry the "two deliberate
-   journeys" feel instead of a boxed tile. Shadow only appears on hover. */
-.paths__card {
-  border-top: 2px solid var(--forest-100); padding: 1.75rem 0 0; transition: border-color 0.3s ease;
-}
-.paths__card:hover { border-color: var(--brand-green); }
-.paths__top { display: flex; align-items: center; justify-content: space-between; }
-.paths__num { font-family: var(--font-serif); font-size: 3rem; line-height: 1; color: var(--bronze); }
-.paths__icon {
-  display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem;
-  border-radius: 999px; background: var(--forest-100); transition: transform 0.3s ease;
-}
-.paths__icon svg { width: 1.3rem; height: 1.3rem; color: var(--forest-700); }
-.paths__card:hover .paths__icon { transform: scale(1.05); }
-.paths__tag {
-  display: inline-flex; margin-top: 1.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--bronze); border: 1px solid var(--forest-100); border-radius: 999px; padding: 0.35rem 0.85rem;
-}
-.paths__card h3 { margin-top: 1rem; font-size: 1.6rem; }
-.paths__card p { margin-top: 0.75rem; font-size: 0.9rem; line-height: 1.65; color: var(--forest-600); }
-.paths__areas { margin-top: 0.6rem !important; font-size: 0.95rem !important; font-weight: 700; color: var(--forest-800) !important; }
-.paths__card .btn { margin-top: 1.5rem; display: inline-flex; }
-.paths__footnote { margin-top: 2.5rem; text-align: center; font-size: 0.85rem; color: var(--forest-500); }
 
 @media (min-width: 640px) { .paths__grid { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1024px) { .paths { padding: 6rem 0; } .paths__card { padding: 2.5rem; } }
@@ -1002,25 +980,19 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 /* =============================================================================
    WHY GLOSSARY
 ============================================================================= */
-.why { background: var(--ivory-100); padding: 4rem 0; }
-.why__layout { display: grid; gap: 2.5rem; align-items: center; }
-.why__visual {
-  position: relative; aspect-ratio: 4 / 3; border-radius: 1.25rem; overflow: hidden;
-  background: linear-gradient(100deg, var(--forest-100) 25%, var(--sage-100) 50%, var(--forest-100) 75%);
-  background-size: 400% 100%; animation: imgShimmer 1.8s ease-in-out infinite; box-shadow: var(--shadow-card-hover);
-}
-.why__visual:has(img.is-loaded) { animation: none; }
-.why__visual img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%;
-  opacity: 0; transform: scale(1.05); transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1);
-}
-.why__visual img.is-loaded { opacity: 1; }
-.why__visual.is-visible img.is-loaded { transform: scale(1); }
-
 .why__points { list-style: none; margin: 2rem 0 0; padding: 0; }
 .why__points li { display: flex; gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--forest-100); }
 .why__points li:first-child { padding-top: 0; }
 .why__points li:last-child { border-bottom: none; padding-bottom: 0; }
+/* Inside .trust-badges (merged Why Glossary section), the points row sits
+   full-width below the photo grid rather than in a narrow text column —
+   give it its own top border and, on desktop, lay the three points out
+   side by side instead of stacked. */
+.trust-badges .why__points { margin-top: 2.75rem; padding-top: 2.25rem; border-top: 1px solid var(--forest-100); }
+@media (min-width: 1024px) {
+  .trust-badges .why__points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .trust-badges .why__points li { border-bottom: none; padding: 0; }
+}
 .why__point-icon {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
   width: 2.75rem; height: 2.75rem; border-radius: 999px; background: var(--forest-100); color: var(--forest-700);
@@ -1028,11 +1000,6 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .why__point-icon svg { width: 1.3rem; height: 1.3rem; }
 .why__points h3 { font-size: 1.05rem; }
 .why__points p { margin-top: 0.35rem; font-size: 0.88rem; line-height: 1.6; color: var(--forest-600); }
-
-@media (min-width: 1024px) {
-  .why { padding: 6rem 0; }
-  .why__layout { grid-template-columns: 1fr 1.15fr; gap: 3.5rem; }
-}
 
 /* =============================================================================
    TRUST BADGES
