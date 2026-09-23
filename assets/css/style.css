@@ -187,10 +187,17 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .section-tag--light::before { background: #b7d0c3; }
 
 .section-head { max-width: 34rem; }
-.section-head--center { max-width: 34rem; margin: 0 auto; text-align: center; }
-.section-head h2 { margin-top: 1rem; font-size: 1.9rem; }
-.section-head p { margin-top: 1rem; font-size: 0.95rem; line-height: 1.65; color: var(--forest-600); }
-@media (min-width: 1024px) { .section-head h2 { font-size: 2.25rem; } }
+.section-head--center { max-width: 36rem; margin: 0 auto; text-align: center; }
+.section-head h2 { margin-top: 0.85rem; font-size: 2.05rem; line-height: 1.1; letter-spacing: -0.01em; }
+.section-head p { margin-top: 1.1rem; font-size: 0.98rem; line-height: 1.65; color: var(--forest-600); }
+@media (min-width: 1024px) { .section-head h2 { font-size: 2.85rem; } }
+
+/* Large editorial numerals — used by the timeline/index-row patterns
+   (How It Works, Technology) instead of boxed icon+number cards. */
+.editorial-num {
+  font-family: var(--font-serif); font-size: 2.25rem; line-height: 1; color: var(--bronze);
+  font-variant-numeric: lining-nums;
+}
 
 .center-cta { margin-top: 3rem; display: flex; justify-content: center; }
 
@@ -248,7 +255,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 /* =============================================================================
    HERO
 ============================================================================= */
-.hero { position: relative; overflow: hidden; padding: 2rem 0 2.5rem; }
+.hero { position: relative; overflow: hidden; padding: 3rem 0 3rem; }
 /* Static ambient glow — no drift/motion. A moving background blob doesn't
    aid understanding, navigation, trust or conversion, so it doesn't earn a
    place on an ad landing page; a soft fixed glow still adds depth. */
@@ -269,12 +276,10 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    .hero's overflow: hidden, so no scrollbar ever showed it), cutting off
    the headline, buttons and chips instead of wrapping/scrolling correctly. */
 .hero__copy { min-width: 0; }
-.hero__title { margin-top: 1.25rem; font-size: 2.1rem; line-height: 1.15; letter-spacing: -0.01em; }
-.hero__sub { margin-top: 1.1rem; max-width: 34rem; font-size: 1rem; line-height: 1.65; color: var(--forest-600); }
-.hero__ctas { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.hero__title { margin-top: 1.25rem; font-size: 2.5rem; line-height: 1.05; letter-spacing: -0.02em; }
+.hero__sub { margin-top: 1.25rem; max-width: 30rem; font-size: 1.1rem; line-height: 1.55; color: var(--forest-600); }
+.hero__ctas { margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.75rem; }
 .hero__ctas .btn { width: 100%; }
-.hero__rating { margin-top: 1.25rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--forest-600); }
-.hero__rating-divider { color: var(--forest-200); font-weight: 400; }
 .stars { color: var(--bronze); letter-spacing: 2px; }
 
 /* Google "G" mark — used wherever a stat is sourced from Google Reviews, so
@@ -282,84 +287,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .google-g { width: 1rem; height: 1rem; flex-shrink: 0; }
 .google-badge { display: flex; align-items: center; gap: 0.35rem; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--forest-500); }
 
-.trust-strip { list-style: none; margin: 1.5rem 0 0; padding: 1rem 0 0; border-top: 1px solid var(--forest-100); display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.25rem; }
-.trust-strip li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--forest-700); }
-.tick { display: inline-flex; align-items: center; justify-content: center; width: 1.15rem; height: 1.15rem; border-radius: 999px; background: var(--forest-800); color: var(--ivory-50); font-size: 0.6rem; flex-shrink: 0; }
-.hero__reassurance { margin-top: 1rem; font-size: 0.78rem; line-height: 1.6; color: var(--forest-500); }
-.hero__no-pressure { margin-top: 0.65rem; font-size: 0.78rem; font-weight: 600; color: var(--forest-500); }
-
-/* The intent selector — deliberately styled as a small decision interface,
-   not an ordinary nav list, since its whole job is "which of the five ads
-   brought you here?" answered in one tap. */
-.intent-select {
-  margin-top: 1.5rem; padding: 1rem 1.1rem; border-radius: 1rem;
-  border: 1px solid var(--forest-100); background: #fff;
-}
-.intent-select__label {
-  display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.1em; color: var(--forest-500);
-}
-/* Below 1024px this is the ONLY decision interface visitors see (the
-   overlay variant takes over above that), so it needs to read as large,
-   obviously-tappable rows — not a scrollable row of small pills. */
-.intent-select__row {
-  margin-top: 0.65rem; display: flex; flex-direction: column; gap: 0.55rem;
-}
-.intent-select__chip {
-  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; width: 100%;
-  font-size: 0.95rem; font-weight: 700; color: var(--forest-800); text-align: left;
-  border: 1.5px solid var(--forest-200); background: var(--ivory-100); border-radius: 0.85rem;
-  padding: 0.95rem 1.15rem; transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
-}
-.intent-select__chip::after {
-  content: "→"; flex-shrink: 0; font-weight: 700; color: var(--forest-300); transition: color 0.2s ease, transform 0.2s ease;
-}
-.intent-select__chip:hover, .intent-select__chip:focus-visible {
-  border-color: var(--brand-green); background: var(--forest-50); color: var(--brand-green);
-}
-.intent-select__chip:hover::after, .intent-select__chip:focus-visible::after { color: var(--brand-green); transform: translateX(2px); }
-.intent-select__chip:active { transform: scale(0.98); }
-.intent-select__chip.is-active {
-  border-color: var(--brand-green); background: var(--brand-green); color: var(--ivory-50);
-}
-.intent-select__chip.is-active::after { color: var(--ivory-50); }
-.intent-select__chip--unsure { border-style: dashed; border-color: var(--bronze); color: var(--bronze); }
-.intent-select__chip--unsure::after { color: var(--bronze); }
-.intent-select__chip--unsure:hover, .intent-select__chip--unsure:focus-visible {
-  border-color: var(--bronze); background: rgba(169, 121, 63, 0.08); color: var(--bronze);
-}
-
-/* Desktop-only overlay variant, laid over the empty upper area of the hero
-   photo frame — same interaction, restyled for the dark backdrop. Hidden
-   below 1024px, where the hero stacks single-column and the standalone
-   card above (shown much earlier in scroll order) is what visitors see. */
-.intent-select--overlay { display: none; }
-@media (min-width: 1024px) {
-  .intent-select:not(.intent-select--overlay) { display: none; }
-  .intent-select--overlay {
-    display: block; position: absolute; z-index: 2; top: 1.25rem; left: 1.25rem; right: 1.25rem;
-    margin-top: 0; padding: 1rem; border-radius: 1rem;
-    background: rgba(10, 29, 22, 0.55); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-  .intent-select--overlay .intent-select__label { color: var(--ivory-200); }
-  .intent-select--overlay .intent-select__row { flex-direction: row; flex-wrap: wrap; }
-  .intent-select--overlay .intent-select__chip {
-    width: auto; font-size: 0.72rem; padding: 0.45rem 0.8rem;
-    background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.28); color: var(--ivory-50);
-  }
-  .intent-select--overlay .intent-select__chip::after { display: none; }
-  .intent-select--overlay .intent-select__chip:hover,
-  .intent-select--overlay .intent-select__chip:focus-visible {
-    border-color: #fff; background: rgba(255, 255, 255, 0.18); color: #fff;
-  }
-  .intent-select--overlay .intent-select__chip.is-active { background: #fff; border-color: #fff; color: var(--brand-green); }
-  .intent-select--overlay .intent-select__chip--unsure { border-color: var(--bronze); color: var(--bronze); }
-  /* The "Doctor Online" float card used to sit top-right of the frame —
-     now that the intent overlay occupies that same top area, push it down
-     to clear below the chip row instead of overlapping it. Extra-qualified
-     selector so this beats the base rule declared later in the file. */
-  .hero__visual .hero__float-card--doctor { top: 10.25rem; }
-}
+.hero__reassurance { margin-top: 1.1rem; font-size: 0.8rem; line-height: 1.6; color: var(--forest-500); max-width: 30rem; }
 
 .hero__visual { position: relative; }
 /* Soft dual-tone glow sitting behind the frame — static, no drift (same
@@ -431,16 +359,35 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .hero__float-dot { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #2fbf71; }
 
 @media (min-width: 640px) {
-  .hero__title { font-size: 2.6rem; }
+  .hero__title { font-size: 3rem; }
   .hero__ctas { flex-direction: row; }
   .hero__ctas .btn { width: auto; }
   .hero__float-card { display: block; }
 }
 @media (min-width: 1024px) {
-  .hero { padding: 4rem 0 5rem; }
+  .hero { padding: 5rem 0 6rem; }
   .hero__grid { grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: 4rem; }
-  .hero__title { font-size: 3.4rem; }
-  .trust-strip { grid-template-columns: repeat(4, auto); }
+  .hero__title { font-size: 4rem; }
+}
+
+/* =============================================================================
+   CREDIBILITY STRIP — compact horizontal bar bridging hero -> rest of page
+============================================================================= */
+.cred-strip { background: var(--ivory-100); border-top: 1px solid var(--forest-100); border-bottom: 1px solid var(--forest-100); padding: 1rem 0; }
+.cred-strip__row {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem;
+  font-size: 0.82rem; font-weight: 600; color: var(--forest-600);
+}
+.cred-strip__rating { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; color: var(--forest-700); }
+.cred-strip__divider { color: var(--forest-200); font-weight: 400; }
+.cred-strip__points { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 0; padding: 0; }
+.cred-strip__points li { position: relative; padding-left: 1.1rem; }
+.cred-strip__points li::before {
+  content: ""; position: absolute; left: 0; top: 0.4em; width: 0.55rem; height: 0.55rem;
+  border-radius: 999px; background: var(--brand-green);
+}
+@media (min-width: 768px) {
+  .cred-strip__row { flex-direction: row; align-items: center; justify-content: space-between; }
 }
 
 /* =============================================================================
@@ -487,37 +434,29 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    APPROACH
 ============================================================================= */
 .approach { background: var(--ivory-100); padding: 4rem 0; }
-.approach__grid { position: relative; margin-top: 3rem; display: grid; gap: 1.25rem; }
-.approach__card { position: relative; height: 100%; border-radius: 1.1rem; border: 1px solid var(--forest-100); background: #fff; padding: 1.5rem; box-shadow: var(--shadow-card); transition: box-shadow 0.25s ease; }
-.approach__card:hover { box-shadow: var(--shadow-card-hover); }
-.approach__top { display: flex; align-items: center; justify-content: space-between; }
-.approach__icon {
-  display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem;
-  border-radius: 999px; background: var(--forest-100); color: var(--forest-700);
+/* A real timeline: numerals + a connecting rule, not four boxed cards. */
+.approach__timeline { position: relative; margin-top: 3rem; list-style: none; padding: 0; }
+.approach__step {
+  position: relative; display: flex; gap: 1.25rem; padding: 1.5rem 0;
+  border-top: 1px solid var(--forest-100);
 }
-.approach__icon svg { width: 1.3rem; height: 1.3rem; }
-.approach__num { font-family: var(--font-serif); font-size: 1.8rem; color: var(--bronze); }
-.approach__label { display: block; margin-top: 0.6rem; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--forest-400); }
-.approach__card h3 { margin-top: 0.4rem; font-size: 1.05rem; }
-.approach__card p { margin-top: 0.5rem; font-size: 0.88rem; line-height: 1.6; color: var(--forest-600); }
+.approach__step:first-child { border-top: none; padding-top: 0; }
+.approach__step .editorial-num { flex-shrink: 0; width: 3rem; }
+.approach__label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--forest-400); }
+.approach__step h3 { margin-top: 0.35rem; font-size: 1.15rem; }
+.approach__step p { margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.6; color: var(--forest-600); max-width: 30rem; }
 
-@media (min-width: 640px) { .approach__grid { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1024px) {
   .approach { padding: 6rem 0; }
-  .approach__grid { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
-  /* A dashed connector reads as a process line running behind the cards —
-     opaque card backgrounds cover it except in the gaps, so it only shows
-     through as short bridging segments between each step. */
-  .approach__grid::before {
-    content: ""; position: absolute; top: 2.5rem; left: 12.5%; right: 12.5%; height: 0;
-    border-top: 2px dashed var(--forest-200); z-index: 0;
+  .approach__timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+  .approach__step { flex-direction: column; gap: 0.75rem; padding: 0 0 0 0; border-top: none; }
+  /* Thin connecting rule running behind all four steps' numerals. */
+  .approach__timeline::before {
+    content: ""; position: absolute; top: 1.15rem; left: 6%; right: 6%; height: 0;
+    border-top: 1px dashed var(--forest-200); z-index: 0;
   }
-  .approach__card { position: relative; z-index: 1; }
+  .approach__step .editorial-num { position: relative; z-index: 1; background: var(--ivory-100); width: auto; padding-right: 0.75rem; }
 }
-
-
-@media (min-width: 640px) { .paths__grid { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1024px) { .paths { padding: 6rem 0; } .paths__card { padding: 2.5rem; } }
 
 /* =============================================================================
    GLP-1 WEIGHT MANAGEMENT
@@ -613,15 +552,25 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    WEIGHT-MANAGEMENT CALCULATOR — one compact card, not a full section of its
    own visual weight. Interactive but deliberately doesn't predict a number.
 ============================================================================= */
-.calculator { background: var(--ivory-100); padding: 3rem 0; }
+.calculator { background: var(--ivory-100); padding: 3.5rem 0; }
 .calculator__card {
-  max-width: 30rem; margin: 0 auto; background: #fff; border: 1px solid var(--forest-100);
-  border-radius: 1.25rem; padding: 2rem 1.75rem; box-shadow: var(--shadow-card);
+  max-width: 54rem; margin: 0 auto; background: #fff; border: 1px solid var(--forest-100);
+  border-radius: 1.5rem; box-shadow: var(--shadow-card-hover); overflow: hidden;
 }
-.calculator__card .section-head { text-align: center; }
-.calculator__body { margin-top: 1.5rem; }
+.calculator__layout { display: grid; }
+.calculator__intro { padding: 2.25rem 1.75rem; }
+.calculator__intro .section-tag { justify-content: center; }
+.calculator__intro h2 { margin-top: 0.6rem; font-size: 1.6rem; text-align: center; }
+.calculator__intro > p { margin-top: 0.65rem; font-size: 0.9rem; text-align: center; color: var(--forest-600); line-height: 1.55; }
 .calculator__label {
-  display: block; text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--forest-700);
+  display: block; margin-top: 1.5rem; text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--forest-700);
+}
+
+/* ---- Result panel: distinct sage-tinted column so the calculator reads
+   as input (left) -> outcome (right), not one long stacked form. ---- */
+.calculator__outcome {
+  background: var(--sage-100); padding: 2.25rem 1.75rem; display: flex; flex-direction: column; justify-content: center;
+  border-top: 1px solid var(--sage-200);
 }
 
 /* ---- Gauge: decorative dial that tracks the slider, no predicted value.
@@ -662,52 +611,69 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 .calculator__slider--compact::-webkit-slider-thumb { width: 1.1rem; height: 1.1rem; }
 .calculator__slider--compact::-moz-range-thumb { width: 1.1rem; height: 1.1rem; }
 
+.calculator__result-label {
+  display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--forest-500);
+}
 .calculator__result {
-  margin-top: 1.25rem; padding: 1rem 1.1rem; border-radius: 0.9rem;
-  background: var(--sage-100); border: 1px solid var(--sage-200);
+  margin-top: 0.75rem; padding: 1.1rem 1.25rem; border-radius: 0.9rem;
+  background: #fff; border: 1px solid var(--sage-200); box-shadow: var(--shadow-card);
 }
 .calculator__result-row {
   display: flex; align-items: baseline; justify-content: space-between;
-  font-size: 0.85rem; color: var(--forest-700); padding-bottom: 0.75rem; border-bottom: 1px solid var(--sage-200);
+  font-size: 0.85rem; color: var(--forest-700); padding-bottom: 0.75rem; border-bottom: 1px solid var(--forest-100);
 }
 .calculator__bmi-readout { display: flex; align-items: baseline; gap: 0.5rem; }
-.calculator__bmi-readout strong { font-family: var(--font-serif); font-size: 1.1rem; color: var(--brand-green); }
+.calculator__bmi-readout strong { font-family: var(--font-serif); font-size: 1.5rem; color: var(--brand-green); }
 .calculator__bmi-tag {
   font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--forest-500); background: #fff; border: 1px solid var(--sage-200);
+  color: var(--forest-500); background: var(--sage-100); border: 1px solid var(--sage-200);
   padding: 0.15rem 0.5rem; border-radius: 999px;
 }
 .calculator__result-text { margin-top: 0.65rem; font-size: 0.85rem; line-height: 1.55; color: var(--forest-600); }
-.calculator__body .btn { margin-top: 1.25rem; }
-.calculator__disclaimer { margin-top: 1.25rem; text-align: center; font-size: 0.7rem; line-height: 1.5; color: var(--forest-400); }
+.calculator__outcome .btn { margin-top: 1.1rem; }
+.calculator__disclaimer { margin-top: 1rem; text-align: center; font-size: 0.7rem; line-height: 1.5; color: var(--forest-500); }
+
+@media (min-width: 768px) {
+  .calculator__layout { grid-template-columns: 1.1fr 1fr; align-items: stretch; }
+  .calculator__intro { padding: 2.75rem 2.5rem; }
+  .calculator__intro h2, .calculator__intro .section-tag, .calculator__intro > p, .calculator__label { text-align: left; justify-content: flex-start; }
+  .calculator__outcome { padding: 2.75rem 2.5rem; border-top: none; border-left: 1px solid var(--sage-200); }
+}
 
 /* =============================================================================
    BODY CONTOURING (treatment cards — reuses the program-card visual language)
 ============================================================================= */
 .contouring { background: var(--ivory-100); padding: 4rem 0; }
-.contouring__grid { margin-top: 3rem; display: grid; gap: 1.5rem; }
+.contouring__grid { margin-top: 3rem; display: grid; gap: 1.75rem; }
+/* Large real photo, full-bleed to the card edge, with the treatment name
+   captioned directly on it — a treatment panel, not a boxed icon+text card. */
 .treatment-card {
-  display: flex; flex-direction: column; height: 100%; border-radius: 1.5rem;
+  display: flex; flex-direction: column; height: 100%; border-radius: 1.25rem;
   border: 1px solid var(--forest-100); background: #fff; box-shadow: var(--shadow-card);
-  padding: 1.1rem 1.1rem 0; transition: box-shadow 0.3s ease, transform 0.3s ease;
+  overflow: hidden; transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 .treatment-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
 .treatment-card__visual {
-  position: relative; aspect-ratio: 16 / 9; border-radius: 1.1rem; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+  position: relative; aspect-ratio: 4 / 5; overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: flex-start;
   background: linear-gradient(100deg, var(--forest-100) 25%, var(--sage-100) 50%, var(--forest-100) 75%);
   background-size: 400% 100%; animation: imgShimmer 1.8s ease-in-out infinite;
-  margin-bottom: 1.25rem;
 }
 .treatment-card__visual:has(img.is-loaded) { animation: none; }
 .treatment-card__visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1); }
 .treatment-card__visual img.is-loaded { opacity: 1; }
 .treatment-card.is-visible .treatment-card__visual img.is-loaded { transform: scale(1); }
 .treatment-card:hover .treatment-card__visual img.is-loaded { transform: scale(1.02); }
-.treatment-card__visual span { position: relative; font-family: var(--font-serif); font-size: 1.3rem; color: var(--forest-700); }
-.treatment-card__visual:has(img.is-loaded) span { display: none; }
-.treatment-card__body { display: flex; flex-direction: column; flex: 1; padding: 0 0.4rem 1.6rem; }
-.treatment-card__body h3 { font-size: 1.2rem; }
+.treatment-card__visual::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(10,29,22,0.65) 0%, transparent 45%);
+}
+.treatment-card__visual span {
+  position: relative; z-index: 1; margin: 1.1rem;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ivory-50);
+}
+.treatment-card__body { display: flex; flex-direction: column; flex: 1; padding: 1.5rem 1.5rem 1.75rem; }
+.treatment-card__body h3 { font-size: 1.35rem; }
 .treatment-card__subtitle { margin-top: 0.4rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--bronze); }
 .treatment-card__meta { margin-top: 0.85rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .treatment-card__meta span {
@@ -730,6 +696,13 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 }
 .treatment-card__body .btn { margin-top: 1.25rem; }
 
+@media (min-width: 640px) { .contouring__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) {
+  .contouring { padding: 6rem 0; }
+  .contouring__grid { grid-template-columns: repeat(3, 1fr); }
+  .treatment-card__visual { aspect-ratio: 3 / 4; }
+}
+
 /* Inline definitions for the treatment abbreviations (RF, EMS, etc.) — shown
    on hover/focus right where the acronym appears, instead of making a
    visitor scroll back up to the Technology section to know what it means. */
@@ -747,8 +720,6 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 20;
 }
 .term-tip:hover::after, .term-tip:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-@media (min-width: 1024px) { .contouring { padding: 6rem 0; } .contouring__grid { grid-template-columns: repeat(3, 1fr); } }
 
 /* =============================================================================
    REAL TREATMENT JOURNEYS — before/after carousel
@@ -1073,6 +1044,7 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    FAQ
 ============================================================================= */
 .faq { background: var(--ivory-100); padding: 4rem 0; }
+.faq__intro { max-width: 34rem; }
 .faq__reviewed {
   margin-top: 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--forest-500);
   text-transform: uppercase; letter-spacing: 0.06em;
@@ -1134,6 +1106,15 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 }
 
 @media (min-width: 640px) { .faq__item summary { font-size: 1.05rem; } }
+
+/* Desktop: intro sits fixed on the left, the accordion scrolls on the
+   right — a real two-column layout, not a centered single stack. */
+@media (min-width: 1024px) {
+  .faq__layout { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 3.5rem; align-items: start; }
+  .faq__intro { position: sticky; top: 6rem; text-align: left; margin: 0; }
+  .faq__list { margin-top: 0; }
+  .faq__cta-block { grid-column: 1 / -1; }
+}
 @media (min-width: 1024px) { .faq { padding: 6rem 0; } }
 
 /* =============================================================================
