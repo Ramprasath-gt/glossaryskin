@@ -189,32 +189,53 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 /* -----------------------------------------------------------------------
-   WEIGHT-MANAGEMENT CALCULATOR — slider reflects the visitor's own entered
-   weight back at them. No formula: there is no verified calculation
-   methodology in this project, so this deliberately avoids predicting a
-   number and instead echoes the input and points to a real consultation.
+   WEIGHT-MANAGEMENT CALCULATOR — weight slider drives the dial and reflects
+   the visitor's own entered weight back at them. The only computed value is
+   BMI (weight / height^2), a standard, real screening formula — not a
+   predicted or invented weight-loss outcome. There is no verified weight-
+   loss calculation methodology in this project, so this deliberately never
+   predicts a number and instead points to a real consultation.
 ------------------------------------------------------------------------ */
 (function initCalculator() {
-  const slider = document.getElementById("calcWeight");
-  if (!slider) return;
+  const weightSlider = document.getElementById("calcWeight");
+  const heightSlider = document.getElementById("calcHeight");
+  if (!weightSlider || !heightSlider) return;
   const valueEl = document.getElementById("calcWeightValue");
-  const echoEl = document.getElementById("calcWeightEcho");
+  const heightValueEl = document.getElementById("calcHeightValue");
+  const bmiValueEl = document.getElementById("calcBmiValue");
+  const bmiTagEl = document.getElementById("calcBmiTag");
   const needle = document.getElementById("calcNeedle");
   const dialFill = document.getElementById("calcDialFill");
-  const min = Number(slider.min);
-  const max = Number(slider.max);
+  const min = Number(weightSlider.min);
+  const max = Number(weightSlider.max);
   const dialLength = dialFill ? dialFill.getTotalLength() : 0;
   if (dialFill) dialFill.style.strokeDasharray = String(dialLength);
 
+  // Standard WHO BMI bands — informational classification, not a diagnosis.
+  function bmiCategory(bmi) {
+    if (bmi < 18.5) return "Underweight";
+    if (bmi < 25) return "Normal";
+    if (bmi < 30) return "Overweight";
+    return "Obese";
+  }
+
   function update() {
-    const value = slider.value;
-    valueEl.textContent = value;
-    echoEl.textContent = value;
-    const fraction = (Number(value) - min) / (max - min);
+    const weight = Number(weightSlider.value);
+    const heightCm = Number(heightSlider.value);
+    valueEl.textContent = weightSlider.value;
+    heightValueEl.textContent = heightSlider.value;
+
+    const fraction = (weight - min) / (max - min);
     if (dialFill) dialFill.style.strokeDashoffset = String(dialLength * (1 - fraction));
     if (needle) needle.style.transform = `rotate(${-90 + fraction * 180}deg)`;
+
+    const heightM = heightCm / 100;
+    const bmi = weight / (heightM * heightM);
+    bmiValueEl.textContent = bmi.toFixed(1);
+    bmiTagEl.textContent = bmiCategory(bmi);
   }
-  slider.addEventListener("input", update);
+  weightSlider.addEventListener("input", update);
+  heightSlider.addEventListener("input", update);
   update();
 })();
 

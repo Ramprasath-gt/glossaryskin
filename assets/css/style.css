@@ -671,6 +671,19 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   width: 1.3rem; height: 1.3rem; border-radius: 999px; background: var(--brand-green);
   border: 3px solid #fff; box-shadow: var(--shadow-card); cursor: pointer;
 }
+
+/* ---- Height: compact secondary slider (weight keeps the big dial) ---- */
+.calculator__field-compact { margin-top: 1.25rem; }
+.calculator__field-compact-top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: 0.8rem; font-weight: 700; color: var(--forest-700);
+}
+.calculator__slider--compact {
+  margin-top: 0.6rem;
+}
+.calculator__slider--compact::-webkit-slider-thumb { width: 1.1rem; height: 1.1rem; }
+.calculator__slider--compact::-moz-range-thumb { width: 1.1rem; height: 1.1rem; }
+
 .calculator__result {
   margin-top: 1.25rem; padding: 1rem 1.1rem; border-radius: 0.9rem;
   background: var(--sage-100); border: 1px solid var(--sage-200);
@@ -679,7 +692,13 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
   display: flex; align-items: baseline; justify-content: space-between;
   font-size: 0.85rem; color: var(--forest-700); padding-bottom: 0.75rem; border-bottom: 1px solid var(--sage-200);
 }
-.calculator__result-row strong { font-family: var(--font-serif); font-size: 1.1rem; color: var(--brand-green); }
+.calculator__bmi-readout { display: flex; align-items: baseline; gap: 0.5rem; }
+.calculator__bmi-readout strong { font-family: var(--font-serif); font-size: 1.1rem; color: var(--brand-green); }
+.calculator__bmi-tag {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--forest-500); background: #fff; border: 1px solid var(--sage-200);
+  padding: 0.15rem 0.5rem; border-radius: 999px;
+}
 .calculator__result-text { margin-top: 0.65rem; font-size: 0.85rem; line-height: 1.55; color: var(--forest-600); }
 .calculator__body .btn { margin-top: 1.25rem; }
 .calculator__disclaimer { margin-top: 1.25rem; text-align: center; font-size: 0.7rem; line-height: 1.5; color: var(--forest-400); }
@@ -1087,6 +1106,10 @@ button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
    FAQ
 ============================================================================= */
 .faq { background: var(--ivory-100); padding: 4rem 0; }
+.faq__reviewed {
+  margin-top: 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--forest-500);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
 .faq__list { margin-top: 2.5rem; border-radius: 1.1rem; border: 1px solid var(--forest-100); background: #fff; overflow: hidden; display: flex; flex-direction: column; gap: 0.6rem; padding: 0.6rem; }
 /* White by default, green only on hover/open — the pill fills with brand
    green and the text flips to white as a visitor's cursor lands on it. */

@@ -374,7 +374,7 @@
       <div class="section-head reveal">
         <span class="section-tag">Weight Management</span>
         <h2>Explore Your Weight-Management Goal</h2>
-        <p>Enter your current weight to see how a personalised Glossary plan could apply to you.</p>
+        <p>Enter your current weight and height to see your BMI and how a personalised Glossary plan could apply to you.</p>
       </div>
 
       <div class="calculator__body">
@@ -392,12 +392,23 @@
 
         <input type="range" id="calcWeight" min="40" max="150" value="70" step="1" aria-label="Current weight in kilograms" class="calculator__slider" />
 
+        <div class="calculator__field-compact">
+          <div class="calculator__field-compact-top">
+            <label for="calcHeight">Height</label>
+            <span><span id="calcHeightValue">165</span> cm</span>
+          </div>
+          <input type="range" id="calcHeight" min="140" max="200" value="165" step="1" aria-label="Height in centimetres" class="calculator__slider calculator__slider--compact" />
+        </div>
+
         <div class="calculator__result">
           <div class="calculator__result-row">
-            <span>Your Weight Today</span>
-            <strong><span id="calcWeightEcho">70</span> kg</strong>
+            <span>Your BMI</span>
+            <span class="calculator__bmi-readout">
+              <strong id="calcBmiValue">25.7</strong>
+              <span class="calculator__bmi-tag" id="calcBmiTag">Overweight</span>
+            </span>
           </div>
-          <p class="calculator__result-text">A personalised weight-management range is determined after your medical consultation — not before.</p>
+          <p class="calculator__result-text">BMI is a general screening measure, not a diagnosis. A personalised weight-management range is determined after your medical consultation — not before.</p>
         </div>
 
         <button class="btn btn--primary btn--md full-width" data-open-booking data-program="glp1" data-source="calculator_section">Discuss My Options</button>
@@ -700,6 +711,7 @@
       <span class="section-tag">Before You Start</span>
       <h2>Everything You'd Want to Know Before You Begin.</h2>
       <p>From choosing the right approach to understanding the consultation, treatment and pricing — here are the answers to the questions we hear most often.</p>
+      <p class="faq__reviewed">Medically reviewed by Dr. Shah Nawaz, MD Medicine</p>
     </div>
 
     <div class="faq__list reveal">
