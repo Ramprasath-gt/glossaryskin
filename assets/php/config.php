@@ -25,15 +25,11 @@ define('SMTP_PASS', '');
 define('SMTP_SECURE', 'tls');
 
 // ---- Google Sheet lead log ---------------------------------------------------
-// Leave blank to skip. Every submission is forwarded here, split across two
-// tabs: Step1 gets Step-1-only leads who haven't finished the form yet,
-// Final gets leads who completed all 4 steps (a Step1 row is removed once
-// that same lead completes, so nobody sits in both). To enable:
-//   1. Open the target Google Sheet: Extensions > Apps Script, paste the
-//      doPost() snippet from /assets/php/GOOGLE_APPS_SCRIPT.md, then
-//      Deploy > Web app (execute as: Me, who has access: Anyone).
-//   2. Paste the deployment URL below.
-define('GOOGLE_SHEET_WEBHOOK_URL', 'https://script.google.com/macros/s/AKfycbzbOp0FCQ0_re7rBEBC12UxIJ9OlapM9SYL8nuBLttKZeYYJPQ7t32yoaeSxAkzIOooOg/exec');
+// Keep this BLANK. The browser already posts every lead straight to the
+// Sheet (googleSheetWebhookUrl in assets/js/config.js); setting a URL here
+// as well would write every lead to the Sheet twice. Only fill it in if the
+// browser-side webhook is removed from config.js.
+define('GOOGLE_SHEET_WEBHOOK_URL', '');
 
 // ---- Misc --------------------------------------------------------------------
 define('LEADS_LOG_FILE', __DIR__ . '/leads/leads.csv');

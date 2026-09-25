@@ -39,9 +39,21 @@
 
 # ---- Security / hygiene --------------------------------------------------
 Options -Indexes
-<FilesMatch "\.(md|ps1)$">
+<FilesMatch "\.(md|ps1|csv|txt|lock)$">
   Require all denied
 </FilesMatch>
+# Hidden files/folders (.git, .gitignore, …) and the lead backup folder.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule (^|/)\. - [F,L]
+  RewriteRule ^assets/php/leads(/|$) - [F,L]
+</IfModule>
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
 
 # ---- Clean URL for the post-conversion confirmation page -----------------
 # /enquiry-confirmed (no extension, as used in the redirect + as the

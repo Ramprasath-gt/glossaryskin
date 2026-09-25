@@ -9,6 +9,9 @@ const SITE_CONFIG = {
   tagline: "Beauty Scientifically Perfected",
   phone: "+91 98218 21567",
   whatsapp: "919821821567",
+  // Prefilled text for every on-page WhatsApp link (wa.me opens the app on
+  // mobile and WhatsApp Web / Desktop on a computer).
+  whatsappMessage: "Hi Glossary, I'd like to know more about your personalised weight management and body contouring options.",
   email: "glossaryappointments@gmail.com",
   address: "B-62, Sector 2, Noida, Uttar Pradesh – 201301",
   serviceAreas: ["Delhi", "Noida", "Gurugram"],
@@ -22,67 +25,94 @@ const SITE_CONFIG = {
   // is what actually has to succeed for a lead to be captured.
   leadEndpoint: "assets/php/submit-lead.php",
 
-  // The same Apps Script Web App URL as GOOGLE_SHEET_WEBHOOK_URL in
-  // assets/php/config.php. Called directly from the browser so leads still
-  // reach the Google Sheet even when hosted somewhere without PHP (e.g.
-  // GitHub Pages) — not a secret, it's a public write-only endpoint. Leave
-  // blank to skip.
+  // Apps Script Web App URL for the Google Sheet (Step1 / Final tabs). The
+  // browser is the only thing that writes to the Sheet — keep
+  // GOOGLE_SHEET_WEBHOOK_URL in assets/php/config.php blank or every lead is
+  // logged twice. Not a secret: it is a public write-only endpoint.
   googleSheetWebhookUrl: "https://script.google.com/macros/s/AKfycbzbOp0FCQ0_re7rBEBC12UxIJ9OlapM9SYL8nuBLttKZeYYJPQ7t32yoaeSxAkzIOooOg/exec",
 
   // Tracking IDs — leave blank to skip injecting that script entirely.
+  // Google Tag Manager (GTM-5DSV6QFV) is installed directly in the <head> of
+  // index.html and enquiry-confirmed.html, so gtmId stays blank here to avoid
+  // loading the container twice. Add Meta Pixel / GA4 as tags inside GTM
+  // rather than here, for the same reason.
   metaPixelId: "",
   ga4Id: "",
   gtmId: "",
 };
 
 // -----------------------------------------------------------------------------
-// UX TIMING — auto-popup behaviour.
+// POPUP_CONFIG — when the enquiry form may open by itself. Demand-based: never
+// on page load, only after real engagement (or desktop exit intent), at most
+// `sessionLimit` times per browser session. Explicit CTA clicks always open
+// the form and ignore all of this. Change values here for CRO/A-B tests.
+// Times are seconds of VISIBLE time on the page; scroll values are the % of
+// the page the visitor has seen (bottom of viewport / page height).
 // -----------------------------------------------------------------------------
-const UX_CONFIG = {
-  // Fallback timer for the first automatic booking-form popup — only used if
-  // the visitor hasn't already scrolled to the "Two Clear Paths" section
-  // (which triggers the popup immediately, since reaching it means they've
-  // had a chance to confirm their service is on the page). Skipped entirely
-  // if the visitor already opened the form manually before either fires.
-  autoOpenDelayMs: 5000,
-  // Every time the visitor closes an auto-opened popup without completing
-  // the form, it reopens again after this delay — repeating, not a single
-  // second attempt, per the current campaign strategy.
-  autoReopenDelayMs: 10000,
-  // Safety cap on how many times the auto-popup can reopen itself in one
-  // session (on top of the first appearance) — keeps "keeps coming back"
-  // from becoming a literal infinite loop that never stops nagging a visitor
-  // who has no intention of booking. Raise or remove if you've decided
-  // that's genuinely worth the bounce-rate risk.
-  maxAutoReopens: 4,
+const POPUP_CONFIG = {
+  // All devices: open this many seconds after the visitor first scrolls
+  // (more than scrollStartMinPx), regardless of the intent score below.
+  scrollStartDelay: 5,
+  scrollStartMinPx: 80,
+  // Desktop (viewport >= mobileBreakpoint)
+  desktopTime: 35,          // Trigger A: this long on the page…
+  desktopScroll: 45,        // …AND scrolled this far
+  highIntentDwell: 10,      // Trigger B: seconds engaged in a high-intent section
+  exitIntentMinTime: 20,    // Trigger C (exit intent) only after this long…
+  exitIntentMinScroll: 30,  // …and this far down the page
+  // Mobile (viewport < mobileBreakpoint) — whichever comes first
+  mobileTime: 55,
+  mobileScroll: 60,
+  mobileBreakpoint: 768,
+  // Intent score the visitor needs before any engagement trigger can fire
+  // (exit intent uses its own conditions above). Never shown to visitors.
+  minIntentScore: 40,
+  intentPoints: {
+    scroll30: 10, scroll45: 15, scroll60: 20,
+    bodyContouring: 15, journeys: 10, stories: 10, faq: 10,
+    goalSelector: 25, treatmentCta: 30,
+  },
+  // Wait this long after the visitor last used the calculator, FAQ, carousel,
+  // a treatment card or any field before interrupting.
+  interactionCooldownMs: 4000,
+  sessionLimit: 1,
 };
 
-// -----------------------------------------------------------------------------
-// TRUST BADGES — "Why Clients Choose Glossary" photo grid.
-// -----------------------------------------------------------------------------
-// "Personalized Care" and "Private & Convenient Experience" use an `icon`
-// instead of a photo — their original images showed an unidentified
-// practitioner with no verified confirmation that they're part of the
-// Glossary team, so presenting that photo as a Glossary badge would imply
-// something unverified. Only FEATURED_DOCTOR's confirmed photo is used to
-// represent a person; every other badge is icon-based until a verified
-// Glossary photo exists for it.
-const TRUST_BADGES = [
-  { label: "Certified Doctors", image: "assets/img/trust-certified-doctors.webp" },
-  { label: "Premium At-Home Treatments", image: "assets/img/trust-at-home-treatments.webp" },
-  { label: "Personalized Care", icon: "care" },
-  { label: "Medical Supervision", image: "assets/img/trust-medical-supervision.webp" },
-  { label: "Structured Monitoring", image: "assets/img/trust-structured-monitoring.webp" },
-  { label: "Private & Convenient Experience", icon: "private" },
-];
+// Form heading, chosen from the CTA that opened the form (its data-source).
+// The automatic popup always uses `auto_popup`, never the CTA of whatever
+// section happens to be on screen. CTAs not listed here (nav, sticky bar,
+// goal selector) fall back to the goal-based copy in POPUP_COPY below.
+const FORM_CONTEXT_TITLES = {
+  hero_starting_point: "Let's Find the Right Starting Point for You",
+  hero_consultation: "Book Your Consultation",
+  glp1_consultation: "Let's Talk About Your Weight-Management Goals",
+  bmi_understand: "Want to Understand Your Result?",
+  bmi_consult_doctor: "Let's Talk About Your Weight-Management Goals",
+  abdomen_treatment: "Looking to Work on Your Abdomen?",
+  hips_treatment: "Looking to Work on Your Hips?",
+  thighs_treatment: "Looking to Work on Your Thighs?",
+  body_contouring_journey: "Let's Talk About Your Body-Contouring Goal",
+  care_team: "Talk to Our Care Team",
+  final_consultation: "Let's Start With a Conversation",
+  auto_popup: "Not Sure Where to Start?",
+};
 
-// Real, verified credential shown as a caption over the featured "Certified
-// Doctors" photo above (TRUST_BADGES[0]). Only edit this alongside that
-// image — the two must stay in sync with whoever is actually pictured.
-const FEATURED_DOCTOR = {
-  name: "Dr. Shah Nawaz",
-  credential: "MD Medicine · Royal College of Physicians, UK",
-  experience: "25+ Years of Experience",
+// Supporting line for CTAs that need their own; everything else uses the
+// goal-based line + reassurance from POPUP_COPY.
+const FORM_CONTEXT_SUBTITLES = {
+  bmi_understand: "Share a few details and our team can help you understand the next step.",
+  bmi_consult_doctor: "Share a few details to request a consultation with the Glossary team.",
+};
+
+// Goal-based heading + supporting line. The line is used under every
+// heading; the heading only when the CTA has no entry above.
+const POPUP_COPY = {
+  abdomen: ["Looking to work on your abdomen?", "Tell us a little about your goal and we'll help you understand your options."],
+  hips: ["Exploring targeted care for your hips?", "Tell us what you're looking to achieve and we'll help you understand your options."],
+  thighs: ["Looking to focus on your thighs?", "Tell us what you're looking to achieve and we'll help you understand your options."],
+  glp1: ["Exploring weight management?", "Tell us what you're looking to achieve and we'll help you understand your options."],
+  general: ["Not Sure Where to Start?", "Tell us what you're looking to achieve. A member of the Glossary team will help you understand which approach may be right for you."],
+  reassurance: "No pressure. No obligation to proceed.",
 };
 
 // -----------------------------------------------------------------------------
@@ -94,9 +124,9 @@ const FEATURED_DOCTOR = {
 // -----------------------------------------------------------------------------
 const INTEREST_OPTIONS = [
   { id: "glp1", label: "GLP-1 Weight Management", priceLabel: "" },
-  { id: "abdomen", label: "Abdomen Inch Loss", priceLabel: "Starting from ₹4,050" },
-  { id: "hips", label: "Hips Inch Loss", priceLabel: "Starting from ₹4,050" },
-  { id: "thighs", label: "Thighs Inch Loss", priceLabel: "Starting from ₹4,050" },
+  { id: "abdomen", label: "Abdomen Inch Loss", priceLabel: "Starting from ₹6,999" },
+  { id: "hips", label: "Hips Inch Loss", priceLabel: "Starting from ₹6,999" },
+  { id: "thighs", label: "Thighs Inch Loss", priceLabel: "Starting from ₹6,999" },
   { id: "not-sure", label: "I'm Not Sure — Help Me Choose", priceLabel: "" },
 ];
 
@@ -153,81 +183,80 @@ const TESTIMONIALS = [
 // project has no verified value for any of them for any client yet. Add a
 // field only once a real, confirmed number exists for that specific pair.
 // -----------------------------------------------------------------------------
+// Pairs 1–3 are the client-supplied "Before N / After N" images (assets/img,
+// converted to before-N.webp / after-N.webp). The area label is inferred
+// from what each pair shows — confirm with the Glossary team if any differ.
+// Story copy describes the TREATMENT (verified service facts), never the
+// person pictured: no client names, quotes, goals, session counts or
+// outcomes are attached to a pair until the client has verified them.
+// `program` preselects the form; null = no preselection.
 const RESULTS_JOURNEYS = [
   {
     id: "abdomen",
     area: "Abdomen",
-    treatment: "Abdomen Inch Loss",
+    label: "Abdomen · Body Contouring",
+    heading: "Targeted care for the abdomen.",
+    summary: "A guided session combining G5 massage, ultrasonic cavitation, radio frequency, lymphatic drainage and heat + EMS.",
+    details: [["Treatment", "Abdomen Inch Loss"], ["Session", "90 min · Starts ₹6,999"]],
     program: "abdomen",
-    description: "Targeted body-contouring treatment focused on the abdomen area as part of an individual treatment plan.",
-    before: null, // [NEEDS VERIFIED CLIENT DATA] — no confirmed matched before/after pair yet
-    after: null,
-    avatar: null,
+    before: "assets/img/before-1.webp",
+    after: "assets/img/after-1.webp",
   },
   {
     id: "hips",
     area: "Hips",
-    treatment: "Hips Inch Loss",
+    label: "Hips · Body Contouring",
+    heading: "Targeted care for the hips.",
+    summary: "The same guided, multi-step approach, focused on the hips.",
+    details: [["Treatment", "Hips Inch Loss"], ["Session", "120 min · Starts ₹6,999"]],
     program: "hips",
-    description: "Targeted body-contouring treatment focused on the hips as part of an individual treatment plan.",
-    before: "assets/img/results-hips-before.webp",
-    after: "assets/img/results-hips-after.webp",
-    avatar: "assets/img/results-hips-avatar.webp",
-    // Reused verbatim from TESTIMONIALS (already tagged "Hips Inch Loss" and
-    // client-approved there) — shown as "what a client said about this
-    // treatment," never captioned as if it names the person photographed,
-    // since that pairing was never confirmed.
-    quote: "I came in specifically for my hips and liked how clearly everything was explained. The treatment itself was relaxing, and the team was attentive throughout.",
-    quoteName: "Aishwarya Kulkarni",
+    before: "assets/img/before-2.webp",
+    after: "assets/img/after-2.webp",
   },
   {
     id: "thighs",
     area: "Thighs",
-    treatment: "Thighs Inch Loss",
+    label: "Thighs · Body Contouring",
+    heading: "Targeted care for the thighs.",
+    summary: "The same guided, multi-step approach, focused on the thighs.",
+    details: [["Treatment", "Thighs Inch Loss"], ["Session", "120 min · Starts ₹6,999"]],
     program: "thighs",
-    description: "Targeted body-contouring treatment focused on the thighs as part of an individual treatment plan.",
     before: "assets/img/results-thighs-before.webp",
     after: "assets/img/results-thighs-after.webp",
-    avatar: "assets/img/results-thighs-avatar.webp",
-    quote: "The biggest difference for me was the overall experience. From the initial consultation to the treatment sessions, everyone was patient and explained what they were doing.",
-    quoteName: "Sahana Iyer",
+  },
+  {
+    id: "weight",
+    area: "Weight Management",
+    label: "Weight Management",
+    heading: "Doctor-guided weight management.",
+    summary: "A personalised approach that starts with a doctor's suitability assessment.",
+    details: [["Treatment", "Weight Management"], ["Approach", "Doctor-guided · Suitability assessed"]],
+    program: null,
+    before: "assets/img/before-3.webp",
+    after: "assets/img/after-3.webp",
   },
 ];
 
 // -----------------------------------------------------------------------------
-// REELS — shown as a 4-up phone-mockup grid; tapping a tile opens that video
-// full-screen with sound. Drop video files in at these EXACT paths
-// (assets/video/reel-1.mp4, etc, with matching posters in assets/img/) and
-// they activate automatically. See SETUP.md for exact specs.
+// REELS — "See the Care Behind the Treatment" video cards; tapping one opens
+// that video full-screen with sound. Approved clips only. reel-2.mp4 is the
+// web-compressed "reel 2.mp4" (7 MB vs 126 MB source); its poster is a clean,
+// text-free frame. The footage itself mentions EMSCULPT and a ₹24,999
+// package — approved for display as supplied, but never repeat either in
+// page copy or captions.
 // -----------------------------------------------------------------------------
 const REELS = [
   {
     id: "how-it-works",
     title: "How the Program Works",
-    caption: "A walkthrough of the doctor-guided process, from consultation to monitoring.",
     posterUrl: "assets/img/reel-1-poster.jpg",
     videoUrl: "assets/video/reel-1.mp4",
   },
   {
-    id: "clinical-experience",
-    title: "The Doctor-Led Experience",
-    caption: "Meet the clinical approach behind every Glossary weight management program.",
+    id: "glossary-experience",
+    title: "The Glossary Experience",
     posterUrl: "assets/img/reel-2-poster.jpg",
     videoUrl: "assets/video/reel-2.mp4",
-  },
-  {
-    id: "patient-experience",
-    title: "The Glossary Experience",
-    caption: "What to expect at every step, from booking to your first check-in.",
-    posterUrl: "assets/img/reel-3-poster.jpg",
-    videoUrl: "assets/video/reel-3.mp4",
-  },
-  {
-    id: "spa-experience",
-    title: "Inside a Treatment Session",
-    caption: "A look at the calm, spa-grade setting every session takes place in.",
-    posterUrl: "assets/img/reel-4-poster.jpg",
-    videoUrl: "assets/video/reel-4.mp4",
   },
 ];
 

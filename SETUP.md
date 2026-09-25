@@ -65,7 +65,7 @@ opens that video full-screen with sound and controls.
 ## Pricing — form-gated, not public
 
 GLP-1 pricing is never shown on the public page. The inch-loss treatments'
-starting price (₹4,050) IS shown publicly on their cards, matching what the
+starting price (₹6,999) IS shown publicly on their cards, matching what the
 Meta ads themselves already promise — but `INTEREST_OPTIONS[].priceLabel` in
 `assets/js/config.js` is what drives the price shown inside the booking
 form (Step 1) once a visitor picks that option.
@@ -131,10 +131,12 @@ like a native app screen, not a broken link).
 ## Optional: log leads to a Google Sheet
 
 Follow `assets/php/GOOGLE_APPS_SCRIPT.md`, then paste the Web App URL into
-`GOOGLE_SHEET_WEBHOOK_URL` in `assets/php/config.php`. Leads are split across
-two tabs: **Sheet1** holds Step-1-only drop-offs (so they're never lost),
-**Sheet2** holds fully completed bookings — and a lead moves out of Sheet1
-into Sheet2 automatically if they go on to finish the form.
+`googleSheetWebhookUrl` in `assets/js/config.js` (the browser posts every
+lead straight to the Sheet). Keep `GOOGLE_SHEET_WEBHOOK_URL` in
+`assets/php/config.php` blank, otherwise every lead is written twice.
+Leads are split across two tabs: **Step1** holds Step-1-only drop-offs (so
+they're never lost), **Final** holds fully completed bookings — and a lead
+moves out of Step1 into Final automatically if they go on to finish the form.
 
 ## Performance
 
@@ -154,18 +156,13 @@ into Sheet2 automatically if they go on to finish the form.
 - Below-the-fold images use `loading="lazy"`; the hero image loads eagerly
   since it's above the fold.
 
-## Optional: interactive map on the location step
+## Tracking: Google Tag Manager
 
-Get a Google Maps JavaScript API key, restrict it (Google Cloud Console) to
-your domain and the Maps JavaScript API + Geocoding API, then paste it into
-`googleMapsApiKey` in `assets/js/config.js`. Without a key, the location step
-still works fully via "Use My Current Location" + manual address entry — it
-just skips the visual map.
-
-## Optional: Meta Pixel / GA4 / GTM
-
-Paste the relevant IDs into `assets/js/config.js` (`metaPixelId`, `ga4Id`,
-`gtmId`). Leave any of them blank to skip injecting that script. Every step
+Google Tag Manager (`GTM-5DSV6QFV`) is installed directly in the `<head>`
+and after `<body>` of `index.html` and `enquiry-confirmed.html`. Add Meta
+Pixel, GA4 and any other tags inside GTM, triggered on the dataLayer events
+below. Keep `metaPixelId`, `ga4Id` and `gtmId` in `assets/js/config.js`
+blank so nothing loads twice. Every step
 of the funnel already fires the matching event (`PageView`, `ViewContent`,
 `CTA_Click`, `Program_Click`, `Form_Start`, `Form_Step_Completed`,
 `Location_Added`, `Date_Selected`, `Time_Selected`, `Form_Submit`, `Lead`,

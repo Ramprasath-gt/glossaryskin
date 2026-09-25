@@ -42,15 +42,15 @@ function doPost(e) {
     return respond();
   }
 
-  // Complete submission — remove any earlier partial row for this mobile
-  // number from Step1 (if present), then log the full lead into Final.
+  // Complete submission — remove every earlier partial row for this mobile
+  // number from Step1 (bottom-up, so row numbers stay valid), then log the
+  // full lead into Final.
   var step1 = ss.getSheetByName("Step1");
   if (step1 && step1.getLastRow() > 1) {
     var mobiles = step1.getRange(2, 3, step1.getLastRow() - 1, 1).getValues();
     for (var i = mobiles.length - 1; i >= 0; i--) {
       if (String(mobiles[i][0]) === String(data.mobile)) {
         step1.deleteRow(i + 2);
-        break;
       }
     }
   }
@@ -89,9 +89,16 @@ function respond() {
 
 ## 3. Connect it
 
-Paste that URL into `GOOGLE_SHEET_WEBHOOK_URL` in `assets/php/config.php`.
+Paste that URL into `googleSheetWebhookUrl` in `assets/js/config.js`.
+The browser posts each lead straight to it (step 1 as `stage: "partial"`,
+the finished form as `stage: "complete"`).
 
-That's it — `submit-lead.php` posts every validated lead to this URL
-server-side (avoiding browser CORS issues) after it has already logged the
-lead locally and attempted the confirmation emails, so a slow or misconfigured
-Sheet never blocks a customer's booking.
+Keep `GOOGLE_SHEET_WEBHOOK_URL` in `assets/php/config.php` **blank** — if both
+are set, every lead is written to the Sheet twice. `submit-lead.php` still
+keeps its own CSV backup and sends the notification emails.
+
+Row 1 of each tab must match the columns the script writes:
+
+- **Step1:** Timestamp, Full Name, Mobile, Email, City, Interest
+- **Final:** Timestamp, Full Name, Mobile, Email, City, Interest, Date, Time,
+  House/Flat, Area, Address, Pincode, Phone, Latitude, Longitude

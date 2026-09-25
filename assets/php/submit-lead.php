@@ -11,9 +11,9 @@ require __DIR__ . '/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Lock this down to your real domain once deployed, e.g.:
-// header('Access-Control-Allow-Origin: https://glossaryskin.com');
-header('Access-Control-Allow-Origin: *');
+// The form posts same-origin; only the live landing page may call this
+// endpoint from a browser.
+header('Access-Control-Allow-Origin: https://weightloss.glossaryskin.com');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
@@ -42,10 +42,10 @@ if (!is_array($lead)) {
 $isPartial = (($lead['leadStage'] ?? '') === 'partial');
 
 $required = $isPartial
-    ? ['fullName', 'mobile', 'email', 'city', 'preferredProgram']
+    ? ['fullName', 'mobile', 'email', 'city'] // interest is only chosen on step 2
     : [
         'fullName', 'mobile', 'email', 'city', 'preferredProgram',
-        'appointmentDate', 'appointmentTime', 'pincode', 'phone',
+        'appointmentDate', 'appointmentTime', 'address', 'pincode', 'phone',
     ];
 foreach ($required as $field) {
     if (empty($lead[$field]) || trim((string) $lead[$field]) === '') {
@@ -282,6 +282,7 @@ function internal_email_html($lead, $programName, $isPartial)
     } else {
         $rows['Appointment Date'] = format_date_pretty($lead['appointmentDate'] ?? '');
         $rows['Appointment Time'] = $lead['appointmentTime'] ?? '';
+        $rows['Address'] = $lead['address'] ?? '';
         $rows['Pincode'] = $lead['pincode'] ?? '';
         $rows['Contact Phone'] = $lead['phone'] ?? '';
     }
