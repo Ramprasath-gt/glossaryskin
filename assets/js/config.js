@@ -29,7 +29,7 @@ const SITE_CONFIG = {
   // browser is the only thing that writes to the Sheet — keep
   // GOOGLE_SHEET_WEBHOOK_URL in assets/php/config.php blank or every lead is
   // logged twice. Not a secret: it is a public write-only endpoint.
-  googleSheetWebhookUrl: "https://script.google.com/macros/s/AKfycbzbOp0FCQ0_re7rBEBC12UxIJ9OlapM9SYL8nuBLttKZeYYJPQ7t32yoaeSxAkzIOooOg/exec",
+  googleSheetWebhookUrl: "https://script.google.com/macros/s/AKfycbzFJ81G_nOI9xgBtQA16cjAx47161MKAghNgtkt0ZyNdiL4bHWwcanVYykyHM_IJa94Gg/exec",
 
   // Tracking IDs — leave blank to skip injecting that script entirely.
   // Google Tag Manager (GTM-5DSV6QFV) is installed directly in the <head> of
