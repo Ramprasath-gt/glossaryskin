@@ -694,26 +694,40 @@ phoneMockupGrid.innerHTML = REELS.map(
 
 const reelLightbox = document.createElement("div");
 reelLightbox.className = "reel-lightbox";
-reelLightbox.innerHTML = `<div class="reel-lightbox__inner"><video controls playsinline></video><button class="reel-lightbox__close">Close ✕</button></div>`;
+reelLightbox.setAttribute("role", "dialog");
+reelLightbox.setAttribute("aria-modal", "true");
+reelLightbox.setAttribute("aria-label", "Treatment video");
+reelLightbox.innerHTML = `<div class="reel-lightbox__inner"><video controls playsinline></video><button type="button" class="reel-lightbox__close">Close ✕</button></div>`;
 document.body.appendChild(reelLightbox);
 const reelLightboxVideo = reelLightbox.querySelector("video");
+const reelLightboxClose = reelLightbox.querySelector(".reel-lightbox__close");
+let reelTriggerEl = null;
+
+function closeReelLightbox() {
+  if (!reelLightbox.classList.contains("is-open")) return;
+  reelLightbox.classList.remove("is-open");
+  reelLightboxVideo.pause();
+  reelLightboxVideo.removeAttribute("src");
+  if (reelTriggerEl && document.body.contains(reelTriggerEl)) reelTriggerEl.focus();
+}
 
 phoneMockupGrid.querySelectorAll(".reel-card").forEach((tile) => {
   tile.addEventListener("click", () => {
     const reel = REELS[Number(tile.dataset.reelIndex)];
     if (!reel.videoUrl) return;
+    reelTriggerEl = tile;
     reelLightboxVideo.src = reel.videoUrl;
     reelLightboxVideo.muted = false;
     reelLightbox.classList.add("is-open");
+    reelLightboxClose.focus();
     reelLightboxVideo.play().catch(() => {});
   });
 });
 reelLightbox.addEventListener("click", (e) => {
-  if (e.target === reelLightbox || e.target.closest(".reel-lightbox__close")) {
-    reelLightbox.classList.remove("is-open");
-    reelLightboxVideo.pause();
-    reelLightboxVideo.removeAttribute("src");
-  }
+  if (e.target === reelLightbox || e.target.closest(".reel-lightbox__close")) closeReelLightbox();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeReelLightbox();
 });
 
 /* -----------------------------------------------------------------------
